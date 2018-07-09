@@ -982,7 +982,7 @@ releases:
       value: '{{ env "DATADOG_API_KEY" }}'
 
     - name: "configDir"
-      value: "/tmp/conf"
+      value: "/tmp/aws"
 
 #######################################################################################
 ## heapster                                                                          ##
