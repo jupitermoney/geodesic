@@ -1,4 +1,3 @@
-ENV KUBECTL_VERSION=1.10.3
 ARG PACKAGES_IMAGE=cloudposse/packages:0.2.11
 FROM ${PACKAGES_IMAGE} as packages
 WORKDIR /packages
@@ -9,6 +8,7 @@ WORKDIR /packages
 # Repo: <https://github.com/cloudposse/packages>
 #
 
+ENV KUBECTL_VERSION=1.10.3
 ARG PACKAGES="awless cfssl cfssljson chamber fetch github-commenter gomplate goofys helm helmfile kops kubectl kubectx kubens sops stern terraform terragrunt yq"
 ENV PACKAGES=${PACKAGES}
 RUN make dist
