@@ -1,3 +1,18 @@
+ENV KUBECTL_VERSION=1.10.3
+ARG PACKAGES_IMAGE=cloudposse/packages:0.2.11
+FROM ${PACKAGES_IMAGE} as packages
+WORKDIR /packages
+
+#
+# Install the select packages from the cloudposse package manager image
+#
+# Repo: <https://github.com/cloudposse/packages>
+#
+
+ARG PACKAGES="awless cfssl cfssljson chamber fetch github-commenter gomplate goofys helm helmfile kops kubectl kubectx kubens sops stern terraform terragrunt yq"
+ENV PACKAGES=${PACKAGES}
+RUN make dist
+
 FROM nikiai/geodesic-base:latest
 
 ENV BANNER "geodesic"
@@ -7,37 +22,15 @@ ENV CACHE_PATH=/localhost/.geodesic
 
 ENV GEODESIC_PATH=/usr/local/include/toolbox
 ENV HOME=/conf
-ENV KOPS_CLUSTER_NAME=example.foo.bar
 ENV SECRETS_PATH=${HOME}
 
 WORKDIR /tmp
-#
-# Install the simple cloudposse package manager
-#
-ARG PACKAGES_VERSION=0.1.7
-ENV PACKAGES_VERSION ${PACKAGES_VERSION}
-RUN git clone --depth=1 -b ${PACKAGES_VERSION} https://github.com/cloudposse/packages.git /packages && rm -rf /packages/.git
 
-#
-# Install packges using the package manager
-#
-ENV TERRAFORM_VERSION 0.11.7
-ENV CHAMBER_VERSION 2.1.0
-ENV HELMFILE_VERSION 0.19.0
-ENV SOPS_VERSION=3.0.5
-ARG PACKAGES="fetch kubectx kubens terragrunt github-commenter gomplate terraform chamber goofys helmfile sops"
-ENV PACKAGES ${PACKAGES}
-RUN make -C /packages/install ${PACKAGES}
+COPY --from=packages /dist/ /usr/local/bin/
 
-#
-# Install kubectl
-#
 ENV KUBERNETES_VERSION=1.10.3
-RUN curl --fail -sSL -O https://storage.googleapis.com/kubernetes-release/release/v${KUBERNETES_VERSION}/bin/linux/amd64/kubectl \
-    && mv kubectl /usr/local/bin/kubectl \
-    && chmod +x /usr/local/bin/kubectl \
-    && kubectl completion bash > /etc/bash_completion.d/kubectl.sh
 ENV KUBECONFIG=${SECRETS_PATH}/kubernetes/kubeconfig
+RUN kubectl completion bash > /etc/bash_completion.d/kubectl.sh
 
 #
 # Install heptio
@@ -50,7 +43,6 @@ RUN curl --fail -sSL -O https://amazon-eks.s3-us-west-2.amazonaws.com/${HEPTIO_V
 #
 # Install kops
 #
-ENV KOPS_VERSION 1.9.1
 ENV KOPS_STATE_STORE s3://undefined
 ENV KOPS_STATE_STORE_REGION ap-south-1
 ENV KOPS_FEATURE_FLAGS=+DrainAndValidateRollingUpdate
@@ -63,36 +55,26 @@ ENV KOPS_PRIVATE_SUBNETS="10.0.1.0/24,10.0.2.0/24,10.0.3.0/24"
 ENV KOPS_UTILITY_SUBNETS="10.0.101.0/24,10.0.102.0/24,10.0.103.0/24"
 ENV KOPS_AVAILABILITY_ZONES="us-west-2a,us-west-2b,us-west-2c"
 ENV KUBECONFIG=/dev/shm/kubecfg
-RUN curl --fail -sSL -O https://github.com/kubernetes/kops/releases/download/${KOPS_VERSION}/kops-linux-amd64 \
-    && mv kops-linux-amd64 /usr/local/bin/kops \
-    && chmod +x /usr/local/bin/kops \
-    && /usr/local/bin/kops completion bash > /etc/bash_completion.d/kops.sh
+RUN /usr/local/bin/kops completion bash > /etc/bash_completion.d/kops.sh
 
 # Instance sizes
-ENV BASTION_MACHINE_TYPE "t2.micro"
+ENV BASTION_MACHINE_TYPE "t2.medium"
 ENV MASTER_MACHINE_TYPE "t2.medium"
-ENV NODE_MACHINE_TYPE "t2.large"
+ENV NODE_MACHINE_TYPE "t2.medium"
 
 # Min/Max number of nodes (aka workers)
-ENV NODE_MAX_SIZE 20
+ENV NODE_MAX_SIZE 2
 ENV NODE_MIN_SIZE 2
 
 #
 # Install helm
 #
-ENV HELM_VERSION 2.9.1
 ENV HELM_HOME /var/lib/helm
 ENV HELM_VALUES_PATH=${SECRETS_PATH}/helm/values
-RUN curl --fail -sSL -O http://storage.googleapis.com/kubernetes-helm/helm-v${HELM_VERSION}-linux-amd64.tar.gz \
-    && tar -zxf helm-v${HELM_VERSION}-linux-amd64.tar.gz \
-    && mv linux-amd64/helm /usr/local/bin/helm \
-    && rm -rf linux-amd64 \
-    && chmod +x /usr/local/bin/helm \
-    && helm completion bash > /etc/bash_completion.d/helm.sh \
+RUN helm completion bash > /etc/bash_completion.d/helm.sh \
     && mkdir -p ${HELM_HOME} \
     && helm init --client-only \
-    && mkdir -p ${HELM_HOME}/plugins \
-    && rm -rf helm-v${HELM_VERSION}-linux-amd64.tar.gz;
+    && mkdir -p ${HELM_HOME}/plugins
 
 #
 # Install helm repos
@@ -124,22 +106,12 @@ ENV AWS_SHARED_CREDENTIALS_FILE=/localhost/.aws/credentials
 #
 # Install aws cli bundle
 #
-ENV AWLESS_VERSION="v0.1.10"
-RUN if [ -n "${AWLESS_VERSION}" ]; then curl --fail -SL -O https://github.com/wallix/awless/releases/download/${AWLESS_VERSION}/awless-linux-amd64.tar.gz \
-    && tar -xzf awless-linux-amd64.tar.gz \
-    && rm awless-linux-amd64.tar.gz \
-    && mv awless /usr/local/bin \
-    && /usr/local/bin/awless completion bash > /etc/bash_completion.d/awless.sh; \
-    fi
-
 ENV AWSCLI_VERSION=1.15.10
-RUN if [ "${AWSCLI_VERSION}" != "" ]; then \
-    pip install --no-cache-dir awscli==${AWSCLI_VERSION} && \
+RUN pip install --no-cache-dir awscli==${AWSCLI_VERSION} && \
     rm -rf /root/.cache && \
     find / -type f -regex '.*\.py[co]' -delete && \
     ln -s /usr/local/aws/bin/aws_bash_completer /etc/bash_completion.d/aws.sh && \
-    ln -s /usr/local/aws/bin/aws_completer /usr/local/bin/; \
-    fi
+    ln -s /usr/local/aws/bin/aws_completer /usr/local/bin/
 
 #
 # Shell
