@@ -8,8 +8,7 @@ WORKDIR /packages
 # Repo: <https://github.com/cloudposse/packages>
 #
 
-ENV KUBECTL_VERSION=1.10.3
-ARG PACKAGES="awless cfssl cfssljson chamber fetch github-commenter gomplate goofys helm helmfile kops kubectl kubectx kubens sops stern terraform terragrunt yq"
+ARG PACKAGES="awless cfssl cfssljson chamber fetch github-commenter gomplate goofys helm helmfile kops kubectx kubens sops stern terraform terragrunt yq"
 ENV PACKAGES=${PACKAGES}
 RUN make dist
 
@@ -28,9 +27,15 @@ WORKDIR /tmp
 
 COPY --from=packages /dist/ /usr/local/bin/
 
-ENV KUBERNETES_VERSION=1.10.3
-ENV KUBECONFIG=${SECRETS_PATH}/kubernetes/kubeconfig
-RUN kubectl completion bash > /etc/bash_completion.d/kubectl.sh
+#
+# Install kubectl
+#
+ENV KUBECTL_VERSION=1.10.3
+RUN curl --fail -sSL -O https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl \
+    && mv kubectl /usr/local/bin/kubectl \
+    && chmod +x /usr/local/bin/kubectl \
+    && kubectl completion bash > /etc/bash_completion.d/kubectl.sh
+ENV KUBECONFIG=${SECRETS_PATH}/kops-aws-platform/kubeconfig
 
 #
 # Install heptio
@@ -41,20 +46,19 @@ RUN curl --fail -sSL -O https://amazon-eks.s3-us-west-2.amazonaws.com/${HEPTIO_V
     && chmod +x /usr/local/bin/heptio-authenticator-aws
 
 #
-# Install kops
+# Default kops configuration
 #
+ENV KOPS_CLUSTER_NAME=example.foo.bar
 ENV KOPS_STATE_STORE s3://undefined
 ENV KOPS_STATE_STORE_REGION ap-south-1
 ENV KOPS_FEATURE_FLAGS=+DrainAndValidateRollingUpdate
 ENV KOPS_MANIFEST=/conf/kops/manifest.yaml
 ENV KOPS_TEMPLATE=/templates/kops/default.yaml
 ENV KOPS_BASE_IMAGE=coreos.com/CoreOS-stable-1409.8.0-hvm
-
 ENV KOPS_BASTION_PUBLIC_NAME="bastion"
 ENV KOPS_PRIVATE_SUBNETS="10.0.1.0/24,10.0.2.0/24,10.0.3.0/24"
 ENV KOPS_UTILITY_SUBNETS="10.0.101.0/24,10.0.102.0/24,10.0.103.0/24"
 ENV KOPS_AVAILABILITY_ZONES="us-west-2a,us-west-2b,us-west-2c"
-ENV KUBECONFIG=/dev/shm/kubecfg
 RUN /usr/local/bin/kops completion bash > /etc/bash_completion.d/kops.sh
 
 # Instance sizes
