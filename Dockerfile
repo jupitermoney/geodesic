@@ -32,7 +32,7 @@ RUN make -C /packages/install ${PACKAGES}
 #
 # Install kubectl
 #
-ENV KUBERNETES_VERSION=1.10
+ENV KUBERNETES_VERSION=1.10.3
 RUN curl --fail -sSL -O https://storage.googleapis.com/kubernetes-release/release/v${KUBERNETES_VERSION}/bin/linux/amd64/kubectl \
     && mv kubectl /usr/local/bin/kubectl \
     && chmod +x /usr/local/bin/kubectl \
