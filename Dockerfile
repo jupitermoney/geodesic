@@ -32,12 +32,20 @@ RUN make -C /packages/install ${PACKAGES}
 #
 # Install kubectl
 #
-ENV KUBERNETES_VERSION=1.9.6
+ENV KUBERNETES_VERSION=1.10
 RUN curl --fail -sSL -O https://storage.googleapis.com/kubernetes-release/release/v${KUBERNETES_VERSION}/bin/linux/amd64/kubectl \
     && mv kubectl /usr/local/bin/kubectl \
     && chmod +x /usr/local/bin/kubectl \
     && kubectl completion bash > /etc/bash_completion.d/kubectl.sh
 ENV KUBECONFIG=${SECRETS_PATH}/kubernetes/kubeconfig
+
+#
+# Install heptio
+#
+ENV HEPTIO_VERSION=1.10.3
+RUN curl --fail -sSL -O https://amazon-eks.s3-us-west-2.amazonaws.com/${HEPTIO_VERSION}/2018-06-05/bin/linux/amd64/heptio-authenticator-aws \
+    && mv heptio-authenticator-aws /usr/local/bin/heptio-authenticator-aws \
+    && chmod +x /usr/local/bin/heptio-authenticator-aws
 
 #
 # Install kops
