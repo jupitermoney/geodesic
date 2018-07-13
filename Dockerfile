@@ -42,8 +42,8 @@ ENV KUBECONFIG=${SECRETS_PATH}/kops-aws-platform/kubeconfig
 #
 ENV HEPTIO_VERSION=1.10.3
 RUN curl --fail -sSL -O https://amazon-eks.s3-us-west-2.amazonaws.com/${HEPTIO_VERSION}/2018-06-05/bin/linux/amd64/heptio-authenticator-aws \
-    && mv heptio-authenticator-aws /usr/local/bin/heptio-authenticator-aws \
-    && chmod +x /usr/local/bin/heptio-authenticator-aws
+    && mv heptio-authenticator-aws /usr/local/bin/aws-iam-authenticator \
+    && chmod +x /usr/local/bin/aws-iam-authenticator
 
 #
 # Default kops configuration
