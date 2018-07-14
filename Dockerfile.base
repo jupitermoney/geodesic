@@ -1,4 +1,4 @@
-FROM alpine:3.7
+FROM alpine:3.8
 
 # Install all packages as root
 USER root
@@ -21,11 +21,20 @@ RUN echo "net.ipv6.conf.all.disable_ipv6=0" > /etc/sysctl.d/00-ipv6.conf
 # Disable vim from reating a swapfile (incompatible with goofys)
 RUN echo 'set noswapfile' >> /etc/vim/vimrc
 
+
+# Where to store state
+ENV CACHE_PATH=/localhost/.geodesic
+
 #
 # Shell
 #
 ENV SHELL=/bin/bash
 ENV LESS=-Xr
 ENV SSH_AGENT_CONFIG=/var/tmp/.ssh-agent
+ENV HISTFILE=${CACHE_PATH}/history
+ENV XDG_CONFIG_HOME=${CACHE_PATH}
+
+VOLUME ["${CACHE_PATH}"]
+
 
 ENTRYPOINT ["/bin/bash"]

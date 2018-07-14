@@ -16,9 +16,6 @@ FROM nikiai/geodesic-base:latest
 
 ENV BANNER "geodesic"
 
-# Where to store state
-ENV CACHE_PATH=/localhost/.geodesic
-
 ENV GEODESIC_PATH=/usr/local/include/toolbox
 ENV HOME=/conf
 ENV SECRETS_PATH=${HOME}
@@ -36,6 +33,7 @@ RUN curl --fail -sSL -O https://storage.googleapis.com/kubernetes-release/releas
     && chmod +x /usr/local/bin/kubectl \
     && kubectl completion bash > /etc/bash_completion.d/kubectl.sh
 ENV KUBECONFIG=${SECRETS_PATH}/kops-aws-platform/kubeconfig
+RUN /usr/local/bin/kops completion bash > /etc/bash_completion.d/kops.sh
 
 #
 # Install heptio
@@ -44,31 +42,6 @@ ENV HEPTIO_VERSION=1.10.3
 RUN curl --fail -sSL -O https://amazon-eks.s3-us-west-2.amazonaws.com/${HEPTIO_VERSION}/2018-06-05/bin/linux/amd64/heptio-authenticator-aws \
     && mv heptio-authenticator-aws /usr/local/bin/aws-iam-authenticator \
     && chmod +x /usr/local/bin/aws-iam-authenticator
-
-#
-# Default kops configuration
-#
-ENV KOPS_CLUSTER_NAME=example.foo.bar
-ENV KOPS_STATE_STORE s3://undefined
-ENV KOPS_STATE_STORE_REGION ap-south-1
-ENV KOPS_FEATURE_FLAGS=+DrainAndValidateRollingUpdate
-ENV KOPS_MANIFEST=/conf/kops/manifest.yaml
-ENV KOPS_TEMPLATE=/templates/kops/default.yaml
-ENV KOPS_BASE_IMAGE=coreos.com/CoreOS-stable-1409.8.0-hvm
-ENV KOPS_BASTION_PUBLIC_NAME="bastion"
-ENV KOPS_PRIVATE_SUBNETS="10.0.1.0/24,10.0.2.0/24,10.0.3.0/24"
-ENV KOPS_UTILITY_SUBNETS="10.0.101.0/24,10.0.102.0/24,10.0.103.0/24"
-ENV KOPS_AVAILABILITY_ZONES="us-west-2a,us-west-2b,us-west-2c"
-RUN /usr/local/bin/kops completion bash > /etc/bash_completion.d/kops.sh
-
-# Instance sizes
-ENV BASTION_MACHINE_TYPE "t2.medium"
-ENV MASTER_MACHINE_TYPE "t2.medium"
-ENV NODE_MACHINE_TYPE "t2.medium"
-
-# Min/Max number of nodes (aka workers)
-ENV NODE_MAX_SIZE 2
-ENV NODE_MIN_SIZE 2
 
 #
 # Install helm
@@ -101,13 +74,7 @@ RUN helm plugin install https://github.com/app-registry/appr-helm-plugin --versi
     && helm plugin install https://github.com/futuresimple/helm-secrets --version ${HELM_SECRETS_VERSION} \
     && helm plugin install https://github.com/sagansystems/helm-github --version ${HELM_GITHUB_VERSION}
 
-#
-# AWS
-#
-ENV AWS_DATA_PATH=/localhost/.aws/
-ENV AWS_CONFIG_FILE=/localhost/.aws/config
-ENV AWS_SHARED_CREDENTIALS_FILE=/localhost/.aws/credentials
-#
+
 # Install aws cli bundle
 #
 ENV AWSCLI_VERSION=1.15.10
@@ -118,12 +85,32 @@ RUN pip install --no-cache-dir awscli==${AWSCLI_VERSION} && \
     ln -s /usr/local/aws/bin/aws_completer /usr/local/bin/
 
 #
-# Shell
+# AWS
 #
-ENV HISTFILE=${CACHE_PATH}/history
-ENV XDG_CONFIG_HOME=${CACHE_PATH}
+ENV AWS_DATA_PATH=/localhost/.aws/ \
+    AWS_CONFIG_FILE=/localhost/.aws/config \
+    AWS_SHARED_CREDENTIALS_FILE=/localhost/.aws/credentials
 
-VOLUME ["${CACHE_PATH}"]
+#
+# Default kops configuration
+#
+ENV KOPS_CLUSTER_NAME=example.foo.bar \
+    KOPS_STATE_STORE=s3://undefined \
+    KOPS_STATE_STORE_REGION=ap-south-1
+    KOPS_FEATURE_FLAGS=+DrainAndValidateRollingUpdate \
+    KOPS_MANIFEST=/conf/kops/manifest.yaml \
+    KOPS_TEMPLATE=/templates/kops/default.yaml \
+    KOPS_BASE_IMAGE=coreos.com/CoreOS-stable-1745.7.0-hvm \
+    KOPS_BASTION_PUBLIC_NAME="bastion" \
+    KOPS_PRIVATE_SUBNETS="10.0.1.0/24,10.0.2.0/24,10.0.3.0/24" \
+    KOPS_UTILITY_SUBNETS="10.0.101.0/24,10.0.102.0/24,10.0.103.0/24" \
+    KOPS_AVAILABILITY_ZONES="us-west-2a,us-west-2b,us-west-2c" \
+    BASTION_MACHINE_TYPE="t2.medium" \
+    MASTER_MACHINE_TYPE="t2.medium" \
+    NODE_MACHINE_TYPE="t2.medium" \
+    NODE_MAX_SIZE=2 \
+    NODE_MIN_SIZE=2
+
 
 COPY rootfs/ /
 
