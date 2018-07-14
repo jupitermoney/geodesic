@@ -1,22 +1,22 @@
-FROM alpine:3.8
+FROM debian:9.4-slim
 
 # Install all packages as root
 USER root
 
 # Install common packages
-ARG APK_PACKAGES="unzip curl tar python make bash vim jq figlet openssl openssh-client sshpass \
-                 iputils drill gcc libffi-dev python-dev musl-dev ncurses openssl-dev py-pip py-virtualenv \
-                 git coreutils less groff bash-completion fuse syslog-ng libc6-compat util-linux \
-                 py2-lxml python-dev cython"
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
+ARG APK_PACKAGES="curl make jq figlet ca-certificates openssh-client sshpass vim\
+                 python-minimal python-pip python-setuptools git less bash-completion fuse syslog-ng python-lxml"
 ENV APK_PACKAGES=${APK_PACKAGES}
 
-RUN apk add --no-cache ${APK_PACKAGES} \
-    && rm -rf /tmp/* /var/cache/apk/* /etc/apk/cache/* \
+RUN apt-get update \
+    && apt-get -y install --no-upgrade --no-install-recommends ${APK_PACKAGES} \
+    && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     && mkdir -p /etc/bash_completion.d/ /etc/profile.d/ \
     && mkdir -p /conf \
     && touch /conf/.gitconfig
 
-RUN echo "net.ipv6.conf.all.disable_ipv6=0" > /etc/sysctl.d/00-ipv6.conf
+RUN mkdir /etc/sysctl.d && echo "net.ipv6.conf.all.disable_ipv6=0" > /etc/sysctl.d/disableipv6.conf
 
 # Disable vim from reating a swapfile (incompatible with goofys)
 RUN echo 'set noswapfile' >> /etc/vim/vimrc
@@ -36,5 +36,4 @@ ENV XDG_CONFIG_HOME=${CACHE_PATH}
 
 VOLUME ["${CACHE_PATH}"]
 
-
-ENTRYPOINT ["/bin/bash"]
+#iputils drill gcc libffi-dev python-dev musl-dev ncurses openssl-dev py-virtualenv groff libc6-compat py2-lxml python-dev cython

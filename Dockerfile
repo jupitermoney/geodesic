@@ -10,9 +10,10 @@ WORKDIR /packages
 
 ARG PACKAGES="awless cfssl cfssljson chamber fetch github-commenter gomplate goofys helm helmfile kops kubectx kubens sops stern terraform terragrunt yq"
 ENV PACKAGES=${PACKAGES}
+ENV KUBECTL_VERSION=1.10.3
 RUN make dist
 
-FROM nikiai/geodesic-base:latest
+FROM nikiai/geodesic-base:debian
 
 ENV BANNER "geodesic"
 
@@ -27,11 +28,7 @@ COPY --from=packages /dist/ /usr/local/bin/
 #
 # Install kubectl
 #
-ENV KUBECTL_VERSION=1.10.3
-RUN curl --fail -sSL -O https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl \
-    && mv kubectl /usr/local/bin/kubectl \
-    && chmod +x /usr/local/bin/kubectl \
-    && kubectl completion bash > /etc/bash_completion.d/kubectl.sh
+RUN kubectl completion bash > /etc/bash_completion.d/kubectl.sh
 ENV KUBECONFIG=${SECRETS_PATH}/kops-aws-platform/kubeconfig
 RUN /usr/local/bin/kops completion bash > /etc/bash_completion.d/kops.sh
 
@@ -77,8 +74,8 @@ RUN helm plugin install https://github.com/app-registry/appr-helm-plugin --versi
 
 # Install aws cli bundle
 #
-ENV AWSCLI_VERSION=1.15.10
-RUN pip install --no-cache-dir awscli==${AWSCLI_VERSION} && \
+ENV AWSCLI_VERSION=1.15.58
+RUN pip3 install --no-cache-dir awscli==${AWSCLI_VERSION} && \
     rm -rf /root/.cache && \
     find / -type f -regex '.*\.py[co]' -delete && \
     ln -s /usr/local/aws/bin/aws_bash_completer /etc/bash_completion.d/aws.sh && \
@@ -96,7 +93,7 @@ ENV AWS_DATA_PATH=/localhost/.aws/ \
 #
 ENV KOPS_CLUSTER_NAME=example.foo.bar \
     KOPS_STATE_STORE=s3://undefined \
-    KOPS_STATE_STORE_REGION=ap-south-1
+    KOPS_STATE_STORE_REGION=ap-south-1 \
     KOPS_FEATURE_FLAGS=+DrainAndValidateRollingUpdate \
     KOPS_MANIFEST=/conf/kops/manifest.yaml \
     KOPS_TEMPLATE=/templates/kops/default.yaml \
