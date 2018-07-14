@@ -10,7 +10,6 @@ WORKDIR /packages
 
 ARG PACKAGES="awless cfssl cfssljson chamber fetch github-commenter gomplate goofys helm helmfile kops kubectx kubens sops stern terraform terragrunt yq"
 ENV PACKAGES=${PACKAGES}
-ENV KUBECTL_VERSION=1.10.3
 RUN make dist
 
 FROM nikiai/geodesic-base:debian
@@ -28,7 +27,11 @@ COPY --from=packages /dist/ /usr/local/bin/
 #
 # Install kubectl
 #
-RUN /usr/local/bin/kubectl completion bash > /etc/bash_completion.d/kubectl.sh
+ENV KUBECTL_VERSION=1.10.3
+RUN curl --fail -sSL -O https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl \
+    && mv kubectl /usr/local/bin/kubectl \
+    && chmod +x /usr/local/bin/kubectl \
+    && kubectl completion bash > /etc/bash_completion.d/kubectl.sh
 ENV KUBECONFIG=${SECRETS_PATH}/kops-aws-platform/kubeconfig
 RUN /usr/local/bin/kops completion bash > /etc/bash_completion.d/kops.sh
 
@@ -75,12 +78,10 @@ RUN helm plugin install https://github.com/app-registry/appr-helm-plugin --versi
 # Install aws cli bundle
 #
 ENV AWSCLI_VERSION=1.15.58
-RUN pip3 install --no-cache-dir awscli==${AWSCLI_VERSION} && \
+RUN pip install --no-cache-dir awscli==${AWSCLI_VERSION} && \
     rm -rf /root/.cache && \
     find / -type f -regex '.*\.py[co]' -delete && \
-    ln -s /usr/local/aws/bin/aws_bash_completer /etc/bash_completion.d/aws.sh && \
-    ln -s /usr/local/aws/bin/aws_completer /usr/local/bin/
-
+    ln -s /usr/local/aws/bin/aws_bash_completer /etc/bash_completion.d/aws.sh
 #
 # AWS
 #
