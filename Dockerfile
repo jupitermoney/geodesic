@@ -28,7 +28,7 @@ COPY --from=packages /dist/ /usr/local/bin/
 #
 # Install kubectl
 #
-RUN kubectl completion bash > /etc/bash_completion.d/kubectl.sh
+RUN /usr/local/bin/kubectl completion bash > /etc/bash_completion.d/kubectl.sh
 ENV KUBECONFIG=${SECRETS_PATH}/kops-aws-platform/kubeconfig
 RUN /usr/local/bin/kops completion bash > /etc/bash_completion.d/kops.sh
 
