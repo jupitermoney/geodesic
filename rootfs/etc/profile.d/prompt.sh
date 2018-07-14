@@ -55,11 +55,11 @@ function geodesic_prompt() {
   if [ -n "${AWS_VAULT}" ]; then
     ROLE_PROMPT="(${AWS_VAULT})"
   else
-    ROLE_PROMPT="(none)"
+    ROLE_PROMPT="(none) "
   fi
 
   PS1=$'${STATUS}'
-  PS1+=" ${ROLE_PROMPT}\W"
-  PS1+=$'${BLACK_RIGHTWARDS_ARROWHEAD}'
+  PS1+=" ${ROLE_PROMPT} \W"
+  PS1+=$' ${BLACK_RIGHTWARDS_ARROWHEAD} '
   export PS1
 }

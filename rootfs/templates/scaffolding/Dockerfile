@@ -39,7 +39,7 @@ ENV TF_BUCKET ""
 ENV TF_BUCKET_REGION "us-east-1"
 ENV TF_DYNAMODB_TABLE ""
 
-# Place configuration in 'aws/' directory
+# Place configuration in 'conf/' directory
 COPY conf/ /conf/
 
 WORKDIR /conf/
