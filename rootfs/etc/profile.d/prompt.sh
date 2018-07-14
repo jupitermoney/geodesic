@@ -39,10 +39,10 @@ function geodesic_prompt() {
       ;;
     *)
       # unicode
-      AWS_VAULT_ACTIVE_MARK=$'\u2714 '      # '✔'
-      AWS_VAULT_INACTIVE_MARK=$'\u274C '    # '❌'
-      BLACK_RIGHTWARDS_ARROWHEAD=$'\u27A4 ' # '➤', suggest '▶' may be present in more fonts
-      BANNER_MARK=$'\u29C9 '                # '⧉'
+      AWS_VAULT_ACTIVE_MARK=$'\u2714'      # '✔'
+      AWS_VAULT_INACTIVE_MARK=$'\u274C'    # '❌'
+      BLACK_RIGHTWARDS_ARROWHEAD=$'\u27A4' # '➤', suggest '▶' may be present in more fonts
+      BANNER_MARK=$'\u29C9'                # '⧉'
       ;;
   esac
 
@@ -59,7 +59,7 @@ function geodesic_prompt() {
   fi
 
   PS1=$'${STATUS}'
-  PS1+="  ${ROLE_PROMPT} \W "
-  PS1+=$'${BLACK_RIGHTWARDS_ARROWHEAD} '
+  PS1+=" ${ROLE_PROMPT}\W"
+  PS1+=$'${BLACK_RIGHTWARDS_ARROWHEAD}'
   export PS1
 }
