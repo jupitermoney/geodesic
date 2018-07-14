@@ -6,7 +6,7 @@ USER root
 # Install common packages
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 ARG APK_PACKAGES="curl make jq figlet ca-certificates openssh-client sshpass vim\
-                 python-minimal python-pip python-setuptools git less bash-completion fuse syslog-ng python-lxml"
+                 python-minimal python-pip python-setuptools git less bash-completion fuse syslog-ng locales"
 ENV APK_PACKAGES=${APK_PACKAGES}
 
 RUN apt-get update \
@@ -21,7 +21,6 @@ RUN mkdir /etc/sysctl.d && echo "net.ipv6.conf.all.disable_ipv6=0" > /etc/sysctl
 # Disable vim from reating a swapfile (incompatible with goofys)
 RUN echo 'set noswapfile' >> /etc/vim/vimrc
 
-
 # Where to store state
 ENV CACHE_PATH=/localhost/.geodesic
 
@@ -35,5 +34,3 @@ ENV HISTFILE=${CACHE_PATH}/history
 ENV XDG_CONFIG_HOME=${CACHE_PATH}
 
 VOLUME ["${CACHE_PATH}"]
-
-#iputils drill gcc libffi-dev python-dev musl-dev ncurses openssl-dev py-virtualenv groff libc6-compat py2-lxml python-dev cython
