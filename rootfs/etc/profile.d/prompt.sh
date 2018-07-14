@@ -9,10 +9,10 @@ function prompter() {
     done
 }
 
-PROMPT_HOOKS+=("reload")
-function reload() {
-  eval $(resize)
-}
+#PROMPT_HOOKS+=("reload")
+#function reload() {
+#  eval $(resize)
+#}
 
 PROMPT_HOOKS+=("terraform_prompt")
 function terraform_prompt() {
