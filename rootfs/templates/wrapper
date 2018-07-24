@@ -91,7 +91,7 @@ function use() {
     else
       echo "# Mounting ${HOME} into container"
 #      FIXME
-      DOCKER_ARGS+=(--volume=${HOME}:/localhost --volume=$(pwd)/aws:/conf)
+      DOCKER_ARGS+=(--volume=${HOME}:/localhost)
     fi
   fi
 
