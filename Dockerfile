@@ -8,7 +8,7 @@ WORKDIR /packages
 # Repo: <https://github.com/cloudposse/packages>
 #
 
-ARG PACKAGES="awless cfssl cfssljson chamber fetch github-commenter gomplate goofys helm helmfile kops kubectx kubens sops stern terraform terragrunt yq"
+ARG PACKAGES="awless cfssl cfssljson chamber fetch github-commenter gomplate goofys helm helmfile kops kubectx kubens sops stern terraform yq"
 ENV PACKAGES=${PACKAGES}
 RUN make dist
 
@@ -77,7 +77,7 @@ RUN helm plugin install https://github.com/app-registry/appr-helm-plugin --versi
 
 # Install aws cli bundle
 #
-ENV AWSCLI_VERSION=1.15.58
+ENV AWSCLI_VERSION=1.15.66
 RUN pip install --no-cache-dir awscli==${AWSCLI_VERSION} && \
     rm -rf /root/.cache && \
     find / -type f -regex '.*\.py[co]' -delete && \
