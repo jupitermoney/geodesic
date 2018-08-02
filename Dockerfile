@@ -8,7 +8,7 @@ WORKDIR /packages
 # Repo: <https://github.com/cloudposse/packages>
 #
 
-ARG PACKAGES="awless cfssl cfssljson chamber fetch github-commenter gomplate goofys helm helmfile kops kubectx kubens sops stern terraform yq"
+ARG PACKAGES="awless cfssl cfssljson chamber fetch github-commenter gomplate goofys helm helmfile kops kubectx kubens sops terraform yq"
 ENV PACKAGES=${PACKAGES}
 RUN make dist
 
