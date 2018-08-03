@@ -24,6 +24,18 @@ WORKDIR /tmp
 
 COPY --from=packages /dist/ /usr/local/bin/
 
+#RUN /usr/local/bin/kops completion bash > /etc/bash_completion.d/kops.sh
+
+#
+# Install kubeaws
+#
+ENV KUBEAWS_VERSION=v0.10.2
+RUN curl --fail -sSL -O https://github.com/kubernetes-incubator/kube-aws/releases/download/${KUBEAWS_VERSION}/kube-aws-linux-amd64.tar.gz\
+    && tar -zxf kube-aws-linux-amd64.tar.gz \
+    && mv linux-amd64/kube-aws /usr/local/bin/kube-aws \
+    && chmod +x /usr/local/bin/kube-aws \
+    && rm -rf kube-aws-linux-amd64.tar.gz linux-amd64
+
 #
 # Install kubectl
 #
@@ -32,8 +44,6 @@ RUN curl --fail -sSL -O https://storage.googleapis.com/kubernetes-release/releas
     && mv kubectl /usr/local/bin/kubectl \
     && chmod +x /usr/local/bin/kubectl \
     && kubectl completion bash > /etc/bash_completion.d/kubectl.sh
-ENV KUBECONFIG=${SECRETS_PATH}/kops-aws-platform/kubeconfig
-RUN /usr/local/bin/kops completion bash > /etc/bash_completion.d/kops.sh
 
 #
 # Install heptio
