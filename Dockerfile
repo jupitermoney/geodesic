@@ -1,4 +1,4 @@
-ARG PACKAGES_IMAGE=cloudposse/packages:0.2.12
+ARG PACKAGES_IMAGE=cloudposse/packages:0.3.1
 FROM ${PACKAGES_IMAGE} as packages
 WORKDIR /packages
 
@@ -8,7 +8,7 @@ WORKDIR /packages
 # Repo: <https://github.com/cloudposse/packages>
 #
 
-ARG PACKAGES="awless cfssl cfssljson chamber fetch github-commenter gomplate goofys helm helmfile kops kubectx kubens sops terraform yq"
+ARG PACKAGES="awless cfssl cfssljson chamber fetch github-commenter gomplate goofys helm helmfile kubens sops terraform yq"
 ENV PACKAGES=${PACKAGES}
 RUN make dist
 
