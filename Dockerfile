@@ -28,17 +28,15 @@ COPY --from=packages /packages/install/ /packages/install/
 # Copy select binary packages
 COPY --from=packages /dist/ /usr/local/bin/
 
-#RUN /usr/local/bin/kops completion bash > /etc/bash_completion.d/kops.sh
-
 #
 # Install kubeaws
 #
-ENV KUBEAWS_VERSION=v0.10.2
-RUN curl --fail -sSL -O https://github.com/kubernetes-incubator/kube-aws/releases/download/${KUBEAWS_VERSION}/kube-aws-linux-amd64.tar.gz\
-    && tar -zxf kube-aws-linux-amd64.tar.gz \
-    && mv linux-amd64/kube-aws /usr/local/bin/kube-aws \
-    && chmod +x /usr/local/bin/kube-aws \
-    && rm -rf kube-aws-linux-amd64.tar.gz linux-amd64
+ENV KOPS_VERSION=1.10.0-beta.1
+RUN curl --fail -sSL -O https://github.com/kubernetes/kops/releases/download/${KOPS_VERSION}/kops-linux-amd64\
+    && mv kops-linux-amd64 /usr/local/bin/kops \
+    && chmod +x /usr/local/bin/kops \
+    && /usr/local/bin/kops completion bash > /etc/profile.d/kops.sh \
+    && chmod 755 /etc/profile.d/kops.sh
 
 #
 # Install kubectl
