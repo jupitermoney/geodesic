@@ -124,13 +124,34 @@ kind: InstanceGroup
 metadata:
   labels:
     kops.k8s.io/cluster: {{getenv "KOPS_CLUSTER_NAME"}}
-  name: nodes
+    kubernetes.io/type: memory
+  name: memory
 spec:
   associatePublicIp: false
   image: {{getenv "KOPS_BASE_IMAGE"}}
   machineType: {{getenv "NODE_MACHINE_TYPE"}}
-  maxSize: {{getenv "NODE_MAX_SIZE"}}
-  minSize: {{getenv "NODE_MIN_SIZE"}}
+  maxSize: {{getenv "MEMORY_NODE_MAX_SIZE"}}
+  minSize: {{getenv "MEMORY_NODE_MIN_SIZE"}}
+  role: Node
+  subnets:
+  {{- range (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") }}
+  - {{.}}
+  {{- end }}
+
+---
+apiVersion: kops/v1alpha2
+kind: InstanceGroup
+metadata:
+  labels:
+    kops.k8s.io/cluster: {{getenv "KOPS_CLUSTER_NAME"}}
+    kubernetes.io/type: compute
+  name: compute
+spec:
+  associatePublicIp: false
+  image: {{getenv "KOPS_BASE_IMAGE"}}
+  machineType: {{getenv "NODE_MACHINE_TYPE"}}
+  maxSize: {{getenv "COMPUTE_NODE_MAX_SIZE"}}
+  minSize: {{getenv "COMPUTE_NODE_MIN_SIZE"}}
   role: Node
   subnets:
   {{- range (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") }}
