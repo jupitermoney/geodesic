@@ -95,8 +95,7 @@ ENV AWSCLI_VERSION=1.15.66
 RUN pip install --no-cache-dir awscli==${AWSCLI_VERSION} && \
     rm -rf /root/.cache && \
     find / -type f -regex '.*\.py[co]' -delete && \
-    ln -s /usr/bin/aws_bash_completer /etc/bash_completion.d/aws.sh && \
-    ln -s /usr/bin/aws_completer /usr/local/bin/
+    ln -s /usr/local/aws/bin/aws_bash_completer /etc/bash_completion.d/aws.sh
 
 #
 # AWS
