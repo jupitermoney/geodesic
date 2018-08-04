@@ -2,6 +2,9 @@
 # Allow bash to check the window size to keep prompt with relative to window size
 shopt -s checkwinsize
 
+# Cache the current screen size
+export SCREEN_SIZE="${LINES}x${COLUMNS}"
+
 export PROMPT_COMMAND=prompter
 function prompter() {
     for hook in ${PROMPT_HOOKS[@]}; do
@@ -9,10 +12,17 @@ function prompter() {
     done
 }
 
-#PROMPT_HOOKS+=("reload")
-#function reload() {
-#  eval $(resize)
-#}
+PROMPT_HOOKS+=("reload")
+function reload() {
+  local current_screen_size="${LINES}x${COLUMNS}"
+  # Detect changes in screensize
+  if [ "${current_screen_size}" != "${SCREEN_SIZE}" ]; then
+    echo "# Screen resized to ${current_screen_size}"
+    export SCREEN_SIZE=${current_screen_size}
+    # Instruct shell that window size has changed to ensure lines wrap correctly
+    kill -WINCH $$
+  fi
+}
 
 PROMPT_HOOKS+=("terraform_prompt")
 function terraform_prompt() {
@@ -28,7 +38,7 @@ function terraform_prompt() {
 # Define our own prompt
 PROMPT_HOOKS+=("geodesic_prompt")
 function geodesic_prompt() {
-
+       
   case $PROMPT_STYLE in
     plain)
       # 8859-1 codepoints:
@@ -39,10 +49,10 @@ function geodesic_prompt() {
       ;;
     *)
       # unicode
-      AWS_VAULT_ACTIVE_MARK=$'\u2714'      # '✔'
-      AWS_VAULT_INACTIVE_MARK=$'\u274C'    # '❌'
-      BLACK_RIGHTWARDS_ARROWHEAD=$'\u27A4' # '➤', suggest '▶' may be present in more fonts
-      BANNER_MARK=$'\u29C9'                # '⧉'
+      AWS_VAULT_ACTIVE_MARK=$'\u2705 '      # '✅'
+      AWS_VAULT_INACTIVE_MARK=$'\u274C '    # '❌'
+      BLACK_RIGHTWARDS_ARROWHEAD=$'\u27A4 ' # '➤', suggest '▶' may be present in more fonts
+      BANNER_MARK=$'\u29C9 '                # '⧉'
       ;;
   esac
 
@@ -55,11 +65,11 @@ function geodesic_prompt() {
   if [ -n "${AWS_VAULT}" ]; then
     ROLE_PROMPT="(${AWS_VAULT})"
   else
-    ROLE_PROMPT="(none) "
+    ROLE_PROMPT="(none)"
   fi
 
   PS1=$'${STATUS}'
   PS1+=" ${ROLE_PROMPT} \W"
-  PS1+=$' ${BLACK_RIGHTWARDS_ARROWHEAD} '
+  PS1+=$'${BLACK_RIGHTWARDS_ARROWHEAD} '
   export PS1
 }

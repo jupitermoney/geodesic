@@ -2,7 +2,7 @@ ARG PACKAGES_IMAGE=cloudposse/packages:0.3.1
 FROM ${PACKAGES_IMAGE} as packages
 WORKDIR /packages
 
-#
+# 
 # Install the select packages from the cloudposse package manager image
 #
 # Repo: <https://github.com/cloudposse/packages>
@@ -22,6 +22,10 @@ ENV SECRETS_PATH=${HOME}
 
 WORKDIR /tmp
 
+# Copy installer over to make package upgrades easy
+COPY --from=packages /packages/install/ /packages/install/
+
+# Copy select binary packages
 COPY --from=packages /dist/ /usr/local/bin/
 
 #RUN /usr/local/bin/kops completion bash > /etc/bash_completion.d/kops.sh
@@ -91,7 +95,9 @@ ENV AWSCLI_VERSION=1.15.66
 RUN pip install --no-cache-dir awscli==${AWSCLI_VERSION} && \
     rm -rf /root/.cache && \
     find / -type f -regex '.*\.py[co]' -delete && \
-    ln -s /usr/local/aws/bin/aws_bash_completer /etc/bash_completion.d/aws.sh
+    ln -s /usr/bin/aws_bash_completer /etc/bash_completion.d/aws.sh && \
+    ln -s /usr/bin/aws_completer /usr/local/bin/
+
 #
 # AWS
 #
