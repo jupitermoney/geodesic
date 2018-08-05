@@ -13,6 +13,24 @@ spec:
             ],
             "Effect": "Allow",
             "Resource": ["*"]
+          },
+          {
+            "Sid": "kopsK8sEC2NodeAmazonVPCPerms",
+            "Effect": "Allow",
+            "Action": [
+              "ec2:CreateNetworkInterface",
+              "ec2:AttachNetworkInterface",
+              "ec2:DeleteNetworkInterface",
+              "ec2:DetachNetworkInterface",
+              "ec2:DescribeNetworkInterfaces",
+              "ec2:DescribeInstances",
+              "ec2:ModifyNetworkInterfaceAttribute",
+              "ec2:AssignPrivateIpAddresses",
+              "tag:TagResources"
+            ],
+            "Resource": [
+              "*"
+            ]
           }
         ]
   api:
@@ -34,18 +52,14 @@ spec:
   {{end}}
   etcdClusters:
   - etcdMembers:
-    {{- range (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") }}
     - encryptedVolume: true
-      instanceGroup: master-{{.}}
-      name: {{. | regexp.Replace "^.*[0-9]" ""}}
-    {{- end }}
+      instanceGroup: master-{{ index (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") 0 }}
+      name: {{ index (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") 0  | regexp.Replace "^.*[0-9]" ""}}
     name: main
   - etcdMembers:
-    {{- range (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") }}
     - encryptedVolume: true
-      instanceGroup: master-{{.}}
-      name: {{. | regexp.Replace "^.*[0-9]" ""}}
-    {{- end }}
+      instanceGroup: master-{{ index (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") 0 }}
+      name: {{ index (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") 0  | regexp.Replace "^.*[0-9]" ""}}
     name: events
   kubernetesApiAccess:
   - 0.0.0.0/0
@@ -101,15 +115,13 @@ spec:
   - utility-{{.}}
   {{- end }}
 
-{{range (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") }}
-
 ---
 apiVersion: kops/v1alpha2
 kind: InstanceGroup
 metadata:
   labels:
     kops.k8s.io/cluster: {{getenv "KOPS_CLUSTER_NAME"}}
-  name: master-{{.}}
+  name: master-{{ index (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") 0 }}
 spec:
   associatePublicIp: false
   image: {{getenv "KOPS_BASE_IMAGE"}}
@@ -118,8 +130,7 @@ spec:
   minSize: 1
   role: Master
   subnets:
-  - {{.}}
-{{- end }}
+  - {{ index (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") 0 }}
 
 ---
 apiVersion: kops/v1alpha2
