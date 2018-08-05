@@ -19,7 +19,9 @@ spec:
     loadBalancer:
       type: Public
   authorization:
-    alwaysAllow: {}
+    rbac: {}
+  authentication:
+    aws: {}
   channel: stable
   cloudLabels:
     Cluster: {{getenv "KOPS_CLUSTER_NAME"}}
@@ -49,10 +51,11 @@ spec:
   - 0.0.0.0/0
   kubernetesVersion: {{getenv "KUBERNETES_VERSION"}}
   masterPublicName: api.{{getenv "KOPS_CLUSTER_NAME"}}
-  networkCIDR: 172.20.0.0/16
+  networkCIDR: {{getenv "TF_VAR_cidr_block"}}
+  networkID: {{getenv "VPC_ID"}}
   networking:
-    calico: {}
-  nonMasqueradeCIDR: 100.64.0.0/10
+    amazonvpc: {}
+  nonMasqueradeCIDR: {{getenv "TF_VAR_cidr_block"}}
   sshAccess:
   - 0.0.0.0/0
   subnets:
@@ -129,7 +132,7 @@ metadata:
 spec:
   associatePublicIp: false
   image: {{getenv "KOPS_BASE_IMAGE"}}
-  machineType: {{getenv "NODE_MACHINE_TYPE"}}
+  machineType: {{getenv "MEMORY_NODE_MACHINE_TYPE"}}
   maxSize: {{getenv "MEMORY_NODE_MAX_SIZE"}}
   minSize: {{getenv "MEMORY_NODE_MIN_SIZE"}}
   role: Node
@@ -149,7 +152,7 @@ metadata:
 spec:
   associatePublicIp: false
   image: {{getenv "KOPS_BASE_IMAGE"}}
-  machineType: {{getenv "NODE_MACHINE_TYPE"}}
+  machineType: {{getenv "COMPUTE_NODE_MACHINE_TYPE"}}
   maxSize: {{getenv "COMPUTE_NODE_MAX_SIZE"}}
   minSize: {{getenv "COMPUTE_NODE_MIN_SIZE"}}
   role: Node
