@@ -1,0 +1,29 @@
+#grafana:
+# serverDashboardFiles:
+#   dashboard_unique_file_name.json: |-
+#     File content goes here
+
+grafana:
+  ingress:
+    annotations:
+      kubernetes.io/tls-acme: "true"
+      external-dns.alpha.kubernetes.io/ttl: "60"
+      certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+      certmanager.k8s.io/acme-challenge-type: dns01
+      certmanager.k8s.io/acme-dns01-provider: prod-dns
+alertmanager:
+  ingress:
+    annotations:
+      kubernetes.io/tls-acme: "true"
+      external-dns.alpha.kubernetes.io/ttl: "60"
+      certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+      certmanager.k8s.io/acme-challenge-type: dns01
+      certmanager.k8s.io/acme-dns01-provider: prod-dns
+prometheus:
+  ingress:
+    annotations:
+      kubernetes.io/tls-acme: "true"
+      external-dns.alpha.kubernetes.io/ttl: "60"
+      certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+      certmanager.k8s.io/acme-challenge-type: dns01
+      certmanager.k8s.io/acme-dns01-provider: prod-dns
