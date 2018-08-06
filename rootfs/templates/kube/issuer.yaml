@@ -1,0 +1,43 @@
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+  namespace: kube-system
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: rohit.verma@niki.ai
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    dns01:
+      providers:
+        - name: prod-dns
+          route53:
+            region: us-west-2
+            accessKeyID: AKIAJTKAHNCQ4DSCCGJQ
+            secretAccessKeySecretRef:
+              name: prod-route53-credentials-secret
+              key: secret-access-key
+            hostedZoneID: Z3O7B88IGYG0CN
+
+---
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: letsencrypt-prod
+  namespace: kube-system
+spec:
+  acme:
+    config:
+    - dns01:
+        provider: prod-dns
+      domains:
+      - '*.dev.niki-ai.com'
+      - 'dev.niki-ai.com'
+  commonName: 'dev.niki-ai.com'
+  secretName: letsencrypt-prod-secret
+  dnsNames:
+  - dev.niki-ai.com
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
