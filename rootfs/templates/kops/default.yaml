@@ -4,6 +4,17 @@ metadata:
   name: {{getenv "KOPS_CLUSTER_NAME"}}
 spec:
   additionalPolicies:
+      master: |
+        [
+          {
+            "Sid": "assumeClusterRole",
+            "Action": [
+              "sts:AssumeRole"
+            ],
+            "Effect": "Allow",
+            "Resource": ["*"]
+          }
+        ]
       nodes: |
         [
           {
@@ -40,9 +51,13 @@ spec:
     rbac: {}
   authentication:
     aws: {}
+  iam:
+    allowContainerRegistry: true
+    legacy: false
   channel: stable
   cloudLabels:
     Cluster: {{getenv "KOPS_CLUSTER_NAME"}}
+    kubernetes.io/cluster/{{getenv "KOPS_CLUSTER_NAME"}}: owned
   cloudProvider: aws
   configBase: {{getenv "KOPS_STATE_STORE" }}/{{getenv "KOPS_CLUSTER_NAME"}}
   {{if getenv "KOPS_DNS_ZONE" }}
@@ -69,7 +84,8 @@ spec:
   networkID: {{getenv "VPC_ID"}}
   networking:
     amazonvpc: {}
-  nonMasqueradeCIDR: {{getenv "TF_VAR_cidr_block"}}
+  nonMasqueradeCIDR: 100.64.0.0/10
+  sshKeyName: {{getenv "TF_VAR_namespace"}}-{{getenv "TF_VAR_stage"}}-kops-{{getenv "TF_VAR_kops_region"}}
   sshAccess:
   - 0.0.0.0/0
   subnets:
@@ -138,14 +154,16 @@ kind: InstanceGroup
 metadata:
   labels:
     kops.k8s.io/cluster: {{getenv "KOPS_CLUSTER_NAME"}}
-    kubernetes.io/type: memory
   name: memory
 spec:
+  nodeLabels:
+    kubernetes.io/type: memory
   associatePublicIp: false
   image: {{getenv "KOPS_BASE_IMAGE"}}
   machineType: {{getenv "MEMORY_NODE_MACHINE_TYPE"}}
   maxSize: {{getenv "MEMORY_NODE_MAX_SIZE"}}
   minSize: {{getenv "MEMORY_NODE_MIN_SIZE"}}
+  maxPrice: "0.051"
   role: Node
   subnets:
   {{- range (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") }}
@@ -158,14 +176,16 @@ kind: InstanceGroup
 metadata:
   labels:
     kops.k8s.io/cluster: {{getenv "KOPS_CLUSTER_NAME"}}
-    kubernetes.io/type: compute
   name: compute
 spec:
+  nodeLabels:
+    kubernetes.io/type: compute
   associatePublicIp: false
   image: {{getenv "KOPS_BASE_IMAGE"}}
   machineType: {{getenv "COMPUTE_NODE_MACHINE_TYPE"}}
   maxSize: {{getenv "COMPUTE_NODE_MAX_SIZE"}}
   minSize: {{getenv "COMPUTE_NODE_MIN_SIZE"}}
+  maxPrice: "0.052"
   role: Node
   subnets:
   {{- range (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") }}
