@@ -143,7 +143,7 @@ spec:
             - --skip-nodes-with-local-storage=false
             - --skip-nodes-with-system-pods=false
             - --expander=least-waste
-            - --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/niki-dev-cluster
+            - --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,kubernetes.io/cluster/dev.niki.ai
           env:
             - name: AWS_REGION
               value: us-west-2
