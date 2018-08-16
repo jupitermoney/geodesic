@@ -31,7 +31,7 @@ COPY --from=packages /dist/ /usr/local/bin/
 #
 # Install kubeaws
 #
-ENV KOPS_VERSION=1.10.0-beta.1
+ENV KOPS_VERSION=1.10.0
 RUN curl --fail -sSL -O https://github.com/kubernetes/kops/releases/download/${KOPS_VERSION}/kops-linux-amd64\
     && mv kops-linux-amd64 /usr/local/bin/kops \
     && chmod +x /usr/local/bin/kops \
