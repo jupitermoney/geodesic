@@ -197,8 +197,8 @@ parse_args "$@"
 options_to_env
 
 # Docker settings
-export DOCKER_IMAGE={{getenv "DOCKER_IMAGE" "cloudposse/geodesic"}}
-export DOCKER_TAG={{getenv "DOCKER_TAG" "${DOCKER_TAG:-dev}"}}
+export DOCKER_IMAGE={{getenv "DOCKER_IMAGE" "niki-ai/geodesic"}}
+export DOCKER_TAG={{getenv "DOCKER_TAG" "${DOCKER_TAG:-latest}"}}
 export DOCKER_NAME=${DOCKER_NAME:-`basename $DOCKER_IMAGE`}
 
 if [ -n "${NAME}" ]; then
