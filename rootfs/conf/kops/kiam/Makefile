@@ -2,10 +2,10 @@ export CHAMBER_SERVICE ?= kops
 export NAMESPACE ?= kube-system
 export IAM_ROLES ?= .*
 
-export CA_C ?= USA
-export CA_ST ?= CA
-export CA_L ?= Los Angeles
-export CA_O ?= Cloud Posse, LLC
+export CA_C ?= IN
+export CA_ST ?= KA
+export CA_L ?= Bengalurur
+export CA_O ?= NIKI
 export CA_OU ?= Ops
 
 # Command used to populate CFSSL configuration fields
