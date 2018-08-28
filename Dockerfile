@@ -8,7 +8,7 @@ WORKDIR /packages
 #
 # Repo: <https://github.com/cloudposse/packages>
 #
-ARG PACKAGES="awless cfssl cfssljson chamber fetch figurine gomplate goofys helm helmfile kubens sops terraform yq"
+ARG PACKAGES="awless cfssl cfssljson chamber fetch figurine gomplate goofys kubectl kops helm helmfile kubens sops stern terraform yq"
 ENV PACKAGES=${PACKAGES}
 ENV KOPS_VERSION=1.10.0
 ENV KUBECTL_VERSION=1.10.3
@@ -16,7 +16,6 @@ ENV STERN_VERSION=1.8.0
 
 RUN make -C /packages/install kubectl kops stern
 RUN make dist
-
 FROM nikiai/geodesic-base:debian
 
 ENV BANNER "geodesic"
