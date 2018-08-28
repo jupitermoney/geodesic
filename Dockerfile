@@ -8,7 +8,7 @@ WORKDIR /packages
 #
 # Repo: <https://github.com/cloudposse/packages>
 #
-ARG PACKAGES="awless cfssl cfssljson chamber fetch gomplate goofys helm helmfile kubens sops terraform yq"
+ARG PACKAGES="awless cfssl cfssljson chamber fetch figurine gomplate goofys helm helmfile kubens sops terraform yq"
 ENV PACKAGES=${PACKAGES}
 ENV KOPS_VERSION=1.10.0
 ENV KUBECTL_VERSION=1.10.3
