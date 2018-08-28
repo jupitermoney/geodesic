@@ -8,7 +8,7 @@ WORKDIR /packages
 #
 # Repo: <https://github.com/cloudposse/packages>
 #
-ARG PACKAGES="awless cfssl cfssljson chamber fetch gomplate goofys helm helmfile kubens sops stern terraform yq"
+ARG PACKAGES="awless cfssl cfssljson chamber fetch gomplate goofys helm helmfile kubens sops terraform yq"
 ENV PACKAGES=${PACKAGES}
 RUN make dist
 
@@ -35,11 +35,6 @@ COPY --from=packages /dist/ /usr/local/bin/
 # Install kubeaws
 #
 ENV KOPS_VERSION=1.10.0
-RUN curl --fail -sSL -O https://github.com/kubernetes/kops/releases/download/${KOPS_VERSION}/kops-linux-amd64\
-    && mv kops-linux-amd64 /usr/local/bin/kops \
-    && chmod +x /usr/local/bin/kops \
-    && /usr/local/bin/kops completion bash > /etc/profile.d/kops.sh \
-    && chmod 755 /etc/profile.d/kops.sh
 ENV KOPS_MANIFEST=/conf/kops/manifest.yaml
 ENV KOPS_TEMPLATE=/templates/kops/default.yaml
 
@@ -47,10 +42,11 @@ ENV KOPS_TEMPLATE=/templates/kops/default.yaml
 # Install kubectl
 #
 ENV KUBECTL_VERSION=1.10.3
-RUN curl --fail -sSL -O https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl \
-    && mv kubectl /usr/local/bin/kubectl \
-    && chmod +x /usr/local/bin/kubectl \
-    && kubectl completion bash > /etc/bash_completion.d/kubectl.sh
+ENV STERN_VERSION=1.8.0
+RUN git clone --depth=1 -b master https://github.com/cloudposse/packages.git /packages && \
+    rm -rf /packages/.git && \
+    make -C /packages/install kubectl kops stern
+
 
 #
 # Install heptio
