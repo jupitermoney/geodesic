@@ -93,6 +93,24 @@ ENV AWS_DATA_PATH=/localhost/.aws/ \
     AWS_CONFIG_FILE=/localhost/.aws/config \
     AWS_SHARED_CREDENTIALS_FILE=/localhost/.aws/credentials
 
+ADD "https://raw.githubusercontent.com/Bash-it/bash-it/master/completion/available/terraform.completion.bash" /etc/bash_completion.d/terraform.bash
+#
+# Default kops configuration
+#
+ENV KOPS_CLUSTER_NAME=example.foo.bar \
+    KOPS_STATE_STORE=s3://undefined \
+    KOPS_STATE_STORE_REGION=ap-south-1 \
+    KOPS_FEATURE_FLAGS=+DrainAndValidateRollingUpdate \
+    KOPS_MANIFEST=/conf/kops/manifest.yaml \
+    KOPS_TEMPLATE=/templates/kops/default.yaml \
+    KOPS_BASE_IMAGE=coreos.com/CoreOS-stable-1800.0.0-hvm \
+    KOPS_BASTION_PUBLIC_NAME="bastion" \
+    KOPS_PRIVATE_SUBNETS="10.0.1.0/24,10.0.2.0/24,10.0.3.0/24" \
+    KOPS_UTILITY_SUBNETS="10.0.101.0/24,10.0.102.0/24,10.0.103.0/24" \
+    KOPS_AVAILABILITY_ZONES="ap-south-1a,ap-south-1b" \
+    BASTION_MACHINE_TYPE="t2.nano" \
+    MASTER_MACHINE_TYPE="t2.medium"
+
 COPY rootfs/ /
 
 WORKDIR /conf

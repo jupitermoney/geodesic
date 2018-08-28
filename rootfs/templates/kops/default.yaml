@@ -59,6 +59,8 @@ spec:
     Cluster: {{getenv "KOPS_CLUSTER_NAME"}}
     kubernetes.io/cluster/{{getenv "KOPS_CLUSTER_NAME"}}: owned
   cloudProvider: aws
+  kubeDNS:
+    provider: CoreDNS
   configBase: {{getenv "KOPS_STATE_STORE" }}/{{getenv "KOPS_CLUSTER_NAME"}}
   {{if getenv "KOPS_DNS_ZONE" }}
   dnsZone: {{getenv "KOPS_DNS_ZONE"}}
@@ -163,7 +165,7 @@ spec:
   machineType: {{getenv "MEMORY_NODE_MACHINE_TYPE"}}
   maxSize: {{getenv "MEMORY_NODE_MAX_SIZE"}}
   minSize: {{getenv "MEMORY_NODE_MIN_SIZE"}}
-  maxPrice: "0.051"
+  maxPrice: "0.052"
   role: Node
   subnets:
   {{- range (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") }}
