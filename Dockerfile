@@ -10,6 +10,11 @@ WORKDIR /packages
 #
 ARG PACKAGES="awless cfssl cfssljson chamber fetch gomplate goofys helm helmfile kubens sops terraform yq"
 ENV PACKAGES=${PACKAGES}
+ENV KOPS_VERSION=1.10.0
+ENV KUBECTL_VERSION=1.10.3
+ENV STERN_VERSION=1.8.0
+
+RUN make -C /packages/install kubectl kops stern
 RUN make dist
 
 FROM nikiai/geodesic-base:debian
@@ -31,22 +36,8 @@ COPY --from=packages /packages/install/ /packages/install/
 # Copy select binary packages
 COPY --from=packages /dist/ /usr/local/bin/
 
-#
-# Install kubeaws
-#
-ENV KOPS_VERSION=1.10.0
 ENV KOPS_MANIFEST=/conf/kops/manifest.yaml
 ENV KOPS_TEMPLATE=/templates/kops/default.yaml
-
-#
-# Install kubectl
-#
-ENV KUBECTL_VERSION=1.10.3
-ENV STERN_VERSION=1.8.0
-RUN git clone --depth=1 -b master https://github.com/cloudposse/packages.git /packages && \
-    rm -rf /packages/.git && \
-    make -C /packages/install kubectl kops stern
-
 
 #
 # Install heptio
