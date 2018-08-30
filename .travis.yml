@@ -19,6 +19,8 @@ install:
 script:
 - make deps
 - make lint
+- echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
+- sudo service docker restart
 - make docker/build
 
 after_success:
