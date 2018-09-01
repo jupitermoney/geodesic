@@ -11,7 +11,7 @@ WORKDIR /packages
 ARG PACKAGES="awless cfssl cfssljson chamber fetch figurine gomplate goofys kubectl kops helm helmfile kubens sops stern terraform yq"
 ENV PACKAGES=${PACKAGES}
 ENV KOPS_VERSION=1.10.0
-ENV KUBECTL_VERSION=1.10.6
+ENV KUBECTL_VERSION=1.10.7
 ENV STERN_VERSION=1.8.0
 ENV HELM_VERSION=2.10.0
 ENV HELMFILE_VERSION=0.25.3
