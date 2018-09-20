@@ -16,7 +16,7 @@ ENV STERN_VERSION=1.8.0
 ENV HELM_VERSION=2.10.0
 ENV HELMFILE_VERSION=0.25.3
 
-RUN make -C /packages/install kubectl kops stern helm helmfile
+RUN make -C /packages/install kubectl stern helm helmfile
 RUN make dist
 FROM nikiai/geodesic-base:debian
 
