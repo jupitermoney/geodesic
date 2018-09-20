@@ -93,6 +93,13 @@ ENV AWS_DATA_PATH=/localhost/.aws/ \
     AWS_SHARED_CREDENTIALS_FILE=/localhost/.aws/credentials
 
 ADD "https://raw.githubusercontent.com/Bash-it/bash-it/master/completion/available/terraform.completion.bash" /etc/bash_completion.d/terraform.bash
+
+# Install awslogs bundle
+#
+RUN pip install --no-cache-dir awslogs && \
+    rm -rf /root/.cache && \
+    find / -type f -regex '.*\.py[co]' -delete
+
 #
 # Default kops configuration
 #
