@@ -1,4 +1,4 @@
-ARG PACKAGES_IMAGE=cloudposse/packages:0.8.1
+ARG PACKAGES_IMAGE=cloudposse/packages:0.26.1
 FROM ${PACKAGES_IMAGE} as packages
 
 WORKDIR /packages
@@ -8,15 +8,13 @@ WORKDIR /packages
 #
 # Repo: <https://github.com/cloudposse/packages>
 #
-ARG PACKAGES="awless cfssl cfssljson chamber fetch figurine gomplate goofys kubectl kops helm helmfile kubens sops stern terraform yq"
+ARG PACKAGES="aws-iam-authenticator awless cfssl cfssljson chamber fetch figurine gomplate goofys kubectl kops helm helmfile kubens sops stern terraform yq"
 ENV PACKAGES=${PACKAGES}
 ENV KOPS_VERSION=1.10.0
 ENV KUBECTL_VERSION=1.10.7
-ENV STERN_VERSION=1.8.0
-ENV HELM_VERSION=2.10.0
-ENV HELMFILE_VERSION=0.25.3
+ENV HELMFILE_VERSION=0.37.0
 
-RUN make -C /packages/install kubectl stern helm helmfile
+RUN make -C /packages/install kubectl helmfile
 RUN make dist
 FROM nikiai/geodesic-base:debian
 
@@ -37,16 +35,8 @@ COPY --from=packages /packages/install/ /packages/install/
 # Copy select binary packages
 COPY --from=packages /dist/ /usr/local/bin/
 
-ENV KOPS_MANIFEST=/conf/kops/manifest.yaml
-ENV KOPS_TEMPLATE=/templates/kops/default.yaml
-
-#
-# Install heptio
-#
-ENV HEPTIO_VERSION=1.10.3
-RUN curl --fail -sSL -O https://amazon-eks.s3-us-west-2.amazonaws.com/${HEPTIO_VERSION}/2018-06-05/bin/linux/amd64/heptio-authenticator-aws \
-    && mv heptio-authenticator-aws /usr/local/bin/aws-iam-authenticator \
-    && chmod +x /usr/local/bin/aws-iam-authenticator
+RUN kubectl completion bash > /etc/bash_completion.d/kubectl.sh
+ADD "https://raw.githubusercontent.com/Bash-it/bash-it/master/completion/available/terraform.completion.bash" /etc/bash_completion.d/terraform.bash
 
 #
 # Install helm
@@ -69,15 +59,18 @@ RUN helm repo add incubator  https://kubernetes-charts-incubator.storage.googlea
 # Install helm plugins
 #
 ENV HELM_APPR_VERSION 0.7.0
+ENV HELM_DIFF_VERSION 2.10.0+1
 ENV HELM_EDIT_VERSION 0.2.0
 ENV HELM_GITHUB_VERSION 0.2.0
 ENV HELM_SECRETS_VERSION 1.2.9
+ENV HELM_S3_VERSION 0.7.0
 
 RUN helm plugin install https://github.com/app-registry/appr-helm-plugin --version v${HELM_APPR_VERSION} \
+    && helm plugin install https://github.com/databus23/helm-diff --version v${HELM_DIFF_VERSION} \
     && helm plugin install https://github.com/mstrzele/helm-edit --version v${HELM_EDIT_VERSION} \
     && helm plugin install https://github.com/futuresimple/helm-secrets --version ${HELM_SECRETS_VERSION} \
-    && helm plugin install https://github.com/sagansystems/helm-github --version ${HELM_GITHUB_VERSION}
-
+    && helm plugin install https://github.com/sagansystems/helm-github --version ${HELM_GITHUB_VERSION} \
+    && helm plugin install https://github.com/hypnoglow/helm-s3 --version v${HELM_S3_VERSION} 
 
 # Install aws cli bundle
 #
@@ -93,8 +86,6 @@ RUN pip install --no-cache-dir awscli==${AWSCLI_VERSION} && \
 ENV AWS_DATA_PATH=/localhost/.aws/ \
     AWS_CONFIG_FILE=/localhost/.aws/config \
     AWS_SHARED_CREDENTIALS_FILE=/localhost/.aws/credentials
-
-ADD "https://raw.githubusercontent.com/Bash-it/bash-it/master/completion/available/terraform.completion.bash" /etc/bash_completion.d/terraform.bash
 
 # Install awslogs bundle
 #
