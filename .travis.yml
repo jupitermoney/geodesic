@@ -21,6 +21,7 @@ script:
 - make lint
 - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
 - sudo service docker restart
+- make base
 - make docker/build
 
 after_success:
