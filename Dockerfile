@@ -63,8 +63,7 @@ ENV HELM_S3_VERSION 0.7.0
 
 RUN helm plugin install https://github.com/app-registry/appr-helm-plugin --version v${HELM_APPR_VERSION} \
     && helm plugin install https://github.com/mstrzele/helm-edit --version v${HELM_EDIT_VERSION} \
-    && helm plugin install https://github.com/hypnoglow/helm-s3 --version v${HELM_S3_VERSION} \
-    && helm repo add niki s3://niki-dev-chart-repo && helm repo update
+    && helm plugin install https://github.com/hypnoglow/helm-s3 --version v${HELM_S3_VERSION}
 
 # Install aws cli bundle
 #
