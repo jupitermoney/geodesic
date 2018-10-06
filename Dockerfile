@@ -1,4 +1,4 @@
-ARG PACKAGES_IMAGE=cloudposse/packages:0.26.1
+ARG PACKAGES_IMAGE=cloudposse/packages:0.34.0
 FROM ${PACKAGES_IMAGE} as packages
 
 WORKDIR /packages
@@ -8,12 +8,11 @@ WORKDIR /packages
 #
 # Repo: <https://github.com/cloudposse/packages>
 #
-ARG PACKAGES="aws-iam-authenticator awless cfssl cfssljson chamber fetch figurine gomplate goofys kubectl kops helm helmfile kubens sops stern terraform yq"
+ARG PACKAGES="aws-iam-authenticator awless cfssl cfssljson chamber fetch figurine gomplate goofys helm helmfile kops kubectl kubens sops stern terraform yq"
 ENV PACKAGES=${PACKAGES}
-ENV KUBECTL_VERSION=1.10.7
-ENV HELMFILE_VERSION=0.37.0
+ENV HELMFILE_VERSION=0.40.1
 
-RUN make -C /packages/install kubectl helmfile
+RUN make -C /packages/install helmfile
 RUN make dist
 FROM nikiai/geodesic-base:debian
 
@@ -50,7 +49,8 @@ RUN helm completion bash > /etc/bash_completion.d/helm.sh \
 #
 # Install helm repos
 #
-RUN helm repo add incubator  https://kubernetes-charts-incubator.storage.googleapis.com/ \
+RUN helm repo add cloudposse-incubator https://charts.cloudposse.com/incubator/ \
+    && helm repo add incubator  https://kubernetes-charts-incubator.storage.googleapis.com/ \
     && helm repo add coreos-stable https://s3-eu-west-1.amazonaws.com/coreos-charts/stable/ \
     && helm repo update
 
@@ -63,7 +63,8 @@ ENV HELM_S3_VERSION 0.7.0
 
 RUN helm plugin install https://github.com/app-registry/appr-helm-plugin --version v${HELM_APPR_VERSION} \
     && helm plugin install https://github.com/mstrzele/helm-edit --version v${HELM_EDIT_VERSION} \
-    && helm plugin install https://github.com/hypnoglow/helm-s3 --version v${HELM_S3_VERSION} 
+    && helm plugin install https://github.com/hypnoglow/helm-s3 --version v${HELM_S3_VERSION} \
+    && helm repo add niki s3://niki-dev-chart-repo && helm repo update
 
 # Install aws cli bundle
 #

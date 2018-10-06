@@ -1,7 +1,7 @@
 apiVersion: kops/v1alpha2
 kind: Cluster
 metadata:
-  name: {{getenv "KOPS_CLUSTER_NAME"}}
+  name: {{ getenv "KOPS_CLUSTER_NAME" }}
 spec:
   additionalPolicies:
       master: |
@@ -120,17 +120,17 @@ apiVersion: kops/v1alpha2
 kind: InstanceGroup
 metadata:
   labels:
-    kops.k8s.io/cluster: {{getenv "KOPS_CLUSTER_NAME"}}
+    kops.k8s.io/cluster: {{ getenv "KOPS_CLUSTER_NAME" }}
   name: bastions
 spec:
-  image: {{getenv "KOPS_BASE_IMAGE"}}
-  machineType: {{getenv "BASTION_MACHINE_TYPE"}}
+  image: {{ getenv "KOPS_BASE_IMAGE" }}
+  machineType: {{ getenv "BASTION_MACHINE_TYPE" }}
   maxSize: 1
   minSize: 1
   role: Bastion
   subnets:
   {{- range (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") }}
-  - utility-{{.}}
+  - utility-{{ . }}
   {{- end }}
 
 ---
@@ -142,8 +142,8 @@ metadata:
   name: master-{{ index (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") 0 }}
 spec:
   associatePublicIp: false
-  image: {{getenv "KOPS_BASE_IMAGE"}}
-  machineType: {{getenv "MASTER_MACHINE_TYPE"}}
+  image: {{ getenv "KOPS_BASE_IMAGE" }}
+  machineType: {{ getenv "MASTER_MACHINE_TYPE" }}
   maxSize: 1
   minSize: 1
   role: Master
