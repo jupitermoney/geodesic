@@ -28,3 +28,4 @@ fi
 # Clean up
 trap - INT
 unset -f ctrl_c
+for key in /localhost/.ssh/*.pem ; do ssh-add $key; done
