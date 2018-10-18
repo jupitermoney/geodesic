@@ -11,8 +11,9 @@ WORKDIR /packages
 ARG PACKAGES="aws-iam-authenticator awless cfssl cfssljson chamber fetch figurine gomplate goofys helm helmfile kops kubectl kubens sops stern terraform yq"
 ENV PACKAGES=${PACKAGES}
 ENV HELMFILE_VERSION=0.40.1
+ENV KOPS_VERSION=1.11.0-alpha.1
 
-RUN make -C /packages/install helmfile
+RUN make -C /packages/install helmfile kops
 RUN make dist
 FROM nikiai/geodesic-base:debian
 
