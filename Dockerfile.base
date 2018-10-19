@@ -1,4 +1,4 @@
-FROM debian:wheezy-20181011-slim
+FROM debian:9.5-slim
 
 COPY packages.txt /tmp/packages.txt
 
@@ -12,5 +12,4 @@ RUN (echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selecti
     && mkdir -p /conf \
     && mkdir -p /var/lib/syslog-ng \
     && touch /conf/.gitconfig \
-    && echo "net.ipv6.conf.all.disable_ipv6=0" > /etc/sysctl.d/disableipv6.conf \
     &&  echo 'set noswapfile' >> /etc/vim/vimrc

@@ -5,12 +5,15 @@ figlet
 fuse
 gettext
 git
+jq
 less
 locales
 make
 openssh-client
 openssl
-python-minimal
+python2.7
+python-pip
+python-setuptools
 sshpass
 syslog-ng
 vim

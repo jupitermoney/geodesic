@@ -1,11 +1,11 @@
 #
 # Python Dependencies
 #
-FROM python:2.7.15-wheezy as python
+FROM nikiai/geodesic-base:debian as python
 
-COPY requirements.txt /requirements.txt
+COPY requirements.txt /tmp/requirements.txt
 
-RUN pip install -r /requirements.txt --install-option="--prefix=/dist" --no-build-isolation
+RUN pip install --no-cache-dir -r /tmp/requirements.txt --install-option="--prefix=/dist"
 
 #
 # Cloud Posse Package Distribution
