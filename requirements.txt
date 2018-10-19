@@ -1,3 +1,2 @@
 awscli==1.16.28
 awslogs
-aws-google-auth
