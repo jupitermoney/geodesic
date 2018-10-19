@@ -20,14 +20,8 @@ deps:
 build:
 	@make --no-print-directory docker:build
 
-cleanup:
-	docker container prune -f && docker image prune -f
-
-push:
-	docker push $(DOCKER_IMAGE)
-
 install:
-	@docker run --rm -e CLUSTER=galaxy $(DOCKER_IMAGE_NAME) | sudo -E bash -s dev
+	@docker run --rm -e CLUSTER=galaxy $(DOCKER_IMAGE_NAME) | sudo -E bash -s $(DOCKER_TAG)
 
 run:
 	@geodesic

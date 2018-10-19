@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 PROMPT_HOOKS+=("terraform_prompt")
 function terraform_prompt() {
   shopt -s nullglob

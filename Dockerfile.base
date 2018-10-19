@@ -1,36 +1,16 @@
-FROM debian:9.5-slim
+FROM debian:wheezy-20181011-slim
 
-# Install all packages as root
-USER root
+COPY packages.txt /tmp/packages.txt
 
 # Install common packages
-RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
-ARG APK_PACKAGES="curl make jq figlet ca-certificates openssh-client sshpass vim\
-                 python-minimal python-pip python-setuptools git less bash-completion fuse syslog-ng locales"
-ENV APK_PACKAGES=${APK_PACKAGES}
-
-RUN apt-get update \
+RUN (echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections) \
+    && APK_PACKAGES=$(cat /tmp/packages.txt | paste -sd ' ' -) \
+    && apt-get update \
     && apt-get -y install --no-upgrade --no-install-recommends ${APK_PACKAGES} \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     && mkdir -p /etc/bash_completion.d/ /etc/profile.d/ \
     && mkdir -p /conf \
-    && touch /conf/.gitconfig
-
-RUN mkdir /etc/sysctl.d && echo "net.ipv6.conf.all.disable_ipv6=0" > /etc/sysctl.d/disableipv6.conf
-
-# Disable vim from reating a swapfile (incompatible with goofys)
-RUN echo 'set noswapfile' >> /etc/vim/vimrc
-
-# Where to store state
-ENV CACHE_PATH=/localhost/.geodesic
-
-#
-# Shell
-#
-ENV SHELL=/bin/bash
-ENV LESS=-Xr
-ENV SSH_AGENT_CONFIG=/var/tmp/.ssh-agent
-ENV HISTFILE=${CACHE_PATH}/history
-ENV XDG_CONFIG_HOME=${CACHE_PATH}
-
-VOLUME ["${CACHE_PATH}"]
+    && mkdir -p /var/lib/syslog-ng \
+    && touch /conf/.gitconfig \
+    && echo "net.ipv6.conf.all.disable_ipv6=0" > /etc/sysctl.d/disableipv6.conf \
+    &&  echo 'set noswapfile' >> /etc/vim/vimrc

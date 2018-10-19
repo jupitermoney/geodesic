@@ -1,20 +1,9 @@
 apiVersion: kops/v1alpha2
 kind: Cluster
 metadata:
-  name: {{getenv "KOPS_CLUSTER_NAME"}}
+  name: {{ getenv "KOPS_CLUSTER_NAME" }}
 spec:
   additionalPolicies:
-      master: |
-        [
-          {
-            "Sid": "assumeClusterRole",
-            "Action": [
-              "sts:AssumeRole"
-            ],
-            "Effect": "Allow",
-            "Resource": ["*"]
-          }
-        ]
       nodes: |
         [
           {
@@ -24,70 +13,104 @@ spec:
             ],
             "Effect": "Allow",
             "Resource": ["*"]
+          {{- if bool (getenv "KOPS_CLUSTER_AUTOSCALER_ENABLED" "false") }}
           },
           {
-            "Sid": "kopsK8sEC2NodeAmazonVPCPerms",
-            "Effect": "Allow",
-            "Action": [
-              "ec2:CreateNetworkInterface",
-              "ec2:AttachNetworkInterface",
-              "ec2:DeleteNetworkInterface",
-              "ec2:DetachNetworkInterface",
-              "ec2:DescribeNetworkInterfaces",
-              "ec2:DescribeInstances",
-              "ec2:ModifyNetworkInterfaceAttribute",
-              "ec2:AssignPrivateIpAddresses",
-              "tag:TagResources"
-            ],
-            "Resource": [
-              "*"
-            ]
+              "Effect": "Allow",
+              "Action": [
+                  "autoscaling:DescribeAutoScalingGroups",
+                  "autoscaling:DescribeAutoScalingInstances",
+                  "autoscaling:DescribeTags",
+                  "autoscaling:SetDesiredCapacity",
+                  "autoscaling:TerminateInstanceInAutoScalingGroup"
+              ],
+              "Resource": "*"
+          {{- end }}
           }
         ]
   api:
     loadBalancer:
       type: Public
+  hooks:
+  {{- if bool (getenv "KOPS_AWS_IAM_AUTHENTICATOR_ENABLED" "false") }}
+    - name: kops-hook-authenticator-config.service
+      before:
+        - kubelet.service
+      roles: 
+        - Master
+      manifest: |-
+        [Unit]
+        Description=Download AWS Authenticator configs from S3
+        [Service]
+        Type=oneshot
+        ExecStart=/bin/mkdir -p /srv/kubernetes/aws-iam-authenticator
+        ExecStart=/usr/local/bin/aws s3 cp --recursive {{ getenv "KOPS_STATE_STORE" }}/{{ getenv "KOPS_CLUSTER_NAME" }}/addons/authenticator /srv/kubernetes/aws-iam-authenticator/
+  {{- end }}
+  kubeAPIServer:
+  {{- if bool (getenv "KOPS_AUTHORIZATION_RBAC_ENABLED" "false") }}
+    authorizationMode: {{ getenv "KOPS_KUBE_API_SERVER_AUTHORIZATION_MODE" "RBAC,AlwaysAllow" }}
+    authorizationRbacSuperUser: {{ getenv "KOPS_KUBE_API_SERVER_AUTHORIZATION_RBAC_SUPER_USER" "admin" }}
+    {{- if bool (getenv "KOPS_AWS_IAM_AUTHENTICATOR_ENABLED" "false") }}
+    authenticationTokenWebhookConfigFile: /srv/kubernetes/aws-iam-authenticator/kubeconfig.yaml
+    {{- end }}
+  {{- end }}
+  {{- if bool (getenv "KOPS_ADMISSION_CONTROL_ENABLED" "true") }}
+    admissionControl:
+    - NamespaceLifecycle
+    - LimitRanger
+    - ServiceAccount
+    - PersistentVolumeLabel
+    - DefaultStorageClass
+    - DefaultTolerationSeconds
+    - MutatingAdmissionWebhook
+    - ValidatingAdmissionWebhook
+    - ResourceQuota
+    - NodeRestriction
+    - Priority
+  {{- end }}
   authorization:
+    {{- if bool (getenv "KOPS_AUTHORIZATION_RBAC_ENABLED" "false") }}
     rbac: {}
-  authentication:
-    aws: {}
-  iam:
-    allowContainerRegistry: true
-    legacy: false
+    {{- else }}
+    alwaysAllow: {}
+    {{- end }}
   channel: stable
   cloudLabels:
-    Cluster: {{getenv "KOPS_CLUSTER_NAME"}}
-    kubernetes.io/cluster/{{getenv "KOPS_CLUSTER_NAME"}}: owned
+    Cluster: {{ getenv "KOPS_CLUSTER_NAME" }}
+    {{- if bool (getenv "KOPS_CLUSTER_AUTOSCALER_ENABLED" "false") }}
+    k8s.io/cluster-autoscaler/enabled: "true"
+    kubernetes.io/cluster/{{ getenv "KOPS_CLUSTER_NAME" }}: "owned"
+    {{- end }}
   cloudProvider: aws
-  kubeDNS:
-    provider: CoreDNS
-  configBase: {{getenv "KOPS_STATE_STORE" }}/{{getenv "KOPS_CLUSTER_NAME"}}
-  {{if getenv "KOPS_DNS_ZONE" }}
-  dnsZone: {{getenv "KOPS_DNS_ZONE"}}
-  {{else}}
-  dnsZone: {{getenv "KOPS_CLUSTER_NAME" | regexp.Replace "^[^.]+\\." ""}}
-  {{end}}
+  configBase: {{ getenv "KOPS_STATE_STORE" }}/{{ getenv "KOPS_CLUSTER_NAME" }}
+  {{- if getenv "KOPS_DNS_ZONE" }}
+  dnsZone: {{ getenv "KOPS_DNS_ZONE" }}
+  {{- else }}
+  dnsZone: {{ getenv "KOPS_CLUSTER_NAME" | regexp.Replace "^[^.]+\\." "" }}
+  {{- end }}
   etcdClusters:
   - etcdMembers:
+    {{- range (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") }}
     - encryptedVolume: true
-      instanceGroup: master-{{ index (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") 0 }}
-      name: {{ index (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") 0  | regexp.Replace "^.*[0-9]" ""}}
+      instanceGroup: master-{{.}}
+      name: {{ . | regexp.Replace "^.*[0-9]" "" }}
+    {{- end }}
     name: main
   - etcdMembers:
+    {{- range (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") }}
     - encryptedVolume: true
-      instanceGroup: master-{{ index (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") 0 }}
-      name: {{ index (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") 0  | regexp.Replace "^.*[0-9]" ""}}
+      instanceGroup: master-{{.}}
+      name: {{ . | regexp.Replace "^.*[0-9]" "" }}
+    {{- end }}
     name: events
   kubernetesApiAccess:
   - 0.0.0.0/0
-  kubernetesVersion: {{getenv "KUBERNETES_VERSION"}}
-  masterPublicName: api.{{getenv "KOPS_CLUSTER_NAME"}}
-  networkCIDR: {{getenv "TF_VAR_cidr_block"}}
-  networkID: {{getenv "VPC_ID"}}
+  kubernetesVersion: {{ getenv "KUBERNETES_VERSION" }}
+  masterPublicName: api.{{ getenv "KOPS_CLUSTER_NAME" }}
+  networkCIDR: 172.20.0.0/16
   networking:
-    amazonvpc: {}
+    calico: {}
   nonMasqueradeCIDR: 100.64.0.0/10
-  sshKeyName: {{getenv "TF_VAR_namespace"}}-{{getenv "TF_VAR_stage"}}-kops-{{getenv "TF_VAR_kops_region"}}
   sshAccess:
   - 0.0.0.0/0
   subnets:
@@ -109,7 +132,7 @@ spec:
   {{- end }}
   topology:
     bastion:
-      bastionPublicName: {{ getenv "KOPS_BASTION_PUBLIC_NAME"}}.{{getenv "KOPS_CLUSTER_NAME"}}
+      bastionPublicName: {{ getenv "KOPS_BASTION_PUBLIC_NAME" }}.{{ getenv "KOPS_CLUSTER_NAME" }}
     dns:
       type: Public
     masters: private
@@ -120,76 +143,62 @@ apiVersion: kops/v1alpha2
 kind: InstanceGroup
 metadata:
   labels:
-    kops.k8s.io/cluster: {{getenv "KOPS_CLUSTER_NAME"}}
+    kops.k8s.io/cluster: {{ getenv "KOPS_CLUSTER_NAME" }}
   name: bastions
 spec:
-  image: {{getenv "KOPS_BASE_IMAGE"}}
-  machineType: {{getenv "BASTION_MACHINE_TYPE"}}
+  image: {{ getenv "KOPS_BASE_IMAGE" }}
+  machineType: {{ getenv "BASTION_MACHINE_TYPE" }}
   maxSize: 1
   minSize: 1
   role: Bastion
   subnets:
   {{- range (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") }}
-  - utility-{{.}}
+  - utility-{{ . }}
   {{- end }}
+
+{{ range (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") }}
 
 ---
 apiVersion: kops/v1alpha2
 kind: InstanceGroup
 metadata:
   labels:
-    kops.k8s.io/cluster: {{getenv "KOPS_CLUSTER_NAME"}}
-  name: master-{{ index (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") 0 }}
+    kops.k8s.io/cluster: {{ getenv "KOPS_CLUSTER_NAME" }}
+  name: master-{{ . }}
 spec:
+  detailedInstanceMonitoring: {{ getenv "KOPS_CLOUDWATCH_DETAILED_MONITORING" "false" }}
   associatePublicIp: false
-  image: {{getenv "KOPS_BASE_IMAGE"}}
-  machineType: {{getenv "MASTER_MACHINE_TYPE"}}
+  image: {{ getenv "KOPS_BASE_IMAGE" }}
+  machineType: {{ getenv "MASTER_MACHINE_TYPE" }}
   maxSize: 1
   minSize: 1
   role: Master
   subnets:
-  - {{ index (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") 0 }}
+  - {{ . }}
+{{- end }}
 
 ---
 apiVersion: kops/v1alpha2
 kind: InstanceGroup
 metadata:
   labels:
-    kops.k8s.io/cluster: {{getenv "KOPS_CLUSTER_NAME"}}
-  name: memory
+    kops.k8s.io/cluster: {{ getenv "KOPS_CLUSTER_NAME" }}
+  name: nodes
 spec:
-  nodeLabels:
-    kubernetes.io/type: memory
+  detailedInstanceMonitoring: {{ getenv "KOPS_CLOUDWATCH_DETAILED_MONITORING" "false" }}
   associatePublicIp: false
-  image: {{getenv "KOPS_BASE_IMAGE"}}
-  machineType: {{getenv "MEMORY_NODE_MACHINE_TYPE"}}
-  maxSize: {{getenv "MEMORY_NODE_MAX_SIZE"}}
-  minSize: {{getenv "MEMORY_NODE_MIN_SIZE"}}
-  maxPrice: "0.052"
+  image: {{ getenv "KOPS_BASE_IMAGE" }}
+  machineType: {{ getenv "NODE_MACHINE_TYPE" }}
+  maxSize: {{ getenv "NODE_MAX_SIZE" }}
+  minSize: {{ getenv "NODE_MIN_SIZE" }}
   role: Node
   subnets:
   {{- range (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") }}
-  - {{.}}
+  - {{ . }}
   {{- end }}
-
+    
+{{/* Allow the manifest to be extended via a datasource */}}
+{{- if (datasourceExists "extensions") -}}
 ---
-apiVersion: kops/v1alpha2
-kind: InstanceGroup
-metadata:
-  labels:
-    kops.k8s.io/cluster: {{getenv "KOPS_CLUSTER_NAME"}}
-  name: compute
-spec:
-  nodeLabels:
-    kubernetes.io/type: compute
-  associatePublicIp: false
-  image: {{getenv "KOPS_BASE_IMAGE"}}
-  machineType: {{getenv "COMPUTE_NODE_MACHINE_TYPE"}}
-  maxSize: {{getenv "COMPUTE_NODE_MAX_SIZE"}}
-  minSize: {{getenv "COMPUTE_NODE_MIN_SIZE"}}
-  maxPrice: "0.052"
-  role: Node
-  subnets:
-  {{- range (getenv "KOPS_AVAILABILITY_ZONES" | strings.Split ",") }}
-  - {{.}}
-  {{- end }}
+{{ include "extensions" }}
+{{- end -}}

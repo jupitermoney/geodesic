@@ -1,0 +1,16 @@
+bash-completion
+ca-certificates
+curl
+figlet
+fuse
+gettext
+git
+less
+locales
+make
+openssh-client
+openssl
+python-minimal
+sshpass
+syslog-ng
+vim
