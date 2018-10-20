@@ -1,13 +1,4 @@
 #
-# Python Dependencies
-#
-FROM nikiai/geodesic-base:debian as python
-
-COPY requirements.txt /tmp/requirements.txt
-
-RUN pip install --no-cache-dir -r /tmp/requirements.txt --install-option="--prefix=/dist"
-
-#
 # Cloud Posse Package Distribution
 #
 FROM cloudposse/packages:0.40.0 as packages
@@ -40,8 +31,11 @@ ENV GEODESIC_PATH=/usr/local/include/toolbox
 ENV HOME=/conf
 ENV KOPS_CLUSTER_NAME=example.foo.bar
 
-# Copy python dependencies
-COPY --from=python /dist/ /usr/
+#
+# Python Dependencies
+#
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
 # Copy installer over to make package upgrades easy
 COPY --from=packages /packages/install/ /packages/install/

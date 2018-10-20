@@ -14,3 +14,7 @@ aws-assumed-role/
 # .tfvars files
 *.tfvars
 *.git
+
+.viminfo
+.cache
+.bash_history

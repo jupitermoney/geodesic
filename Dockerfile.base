@@ -12,4 +12,5 @@ RUN (echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selecti
     && mkdir -p /conf \
     && mkdir -p /var/lib/syslog-ng \
     && touch /conf/.gitconfig \
-    &&  echo 'set noswapfile' >> /etc/vim/vimrc
+    &&  echo 'set noswapfile' >> /etc/vim/vimrc \
+    && pip install wheel
