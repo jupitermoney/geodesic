@@ -53,20 +53,18 @@ RUN kubectl completion bash > /etc/bash_completion.d/kubectl.sh
 #
 # Install kops
 #
-ENV KOPS_STATE_STORE s3://undefined
-ENV KOPS_STATE_STORE_REGION us-east-1
-ENV KOPS_FEATURE_FLAGS=+DrainAndValidateRollingUpdate
-ENV KOPS_MANIFEST=/conf/kops/manifest.yaml
-ENV KOPS_TEMPLATE=/templates/kops/default.yaml
 
-# https://github.com/kubernetes/kops/blob/master/channels/stable
-# https://github.com/kubernetes/kops/blob/master/docs/images.md
-ENV KOPS_BASE_IMAGE=kope.io/k8s-1.9-debian-jessie-amd64-hvm-ebs-2018-03-11
+ENV KOPS_STATE_STORE_REGION=ap-south-1 \
+    KOPS_FEATURE_FLAGS=+DrainAndValidateRollingUpdate \
+    KOPS_MANIFEST=/conf/kops/manifest.yaml \
+    KOPS_TEMPLATE=/templates/kops/default.yaml \
+    KOPS_BASE_IMAGE=coreos.com/CoreOS-stable-1800.0.0-hvm \
+    KOPS_BASTION_PUBLIC_NAME="bastion" \
+    KOPS_PRIVATE_SUBNETS="10.0.1.0/24,10.0.2.0/24,10.0.3.0/24" \
+    KOPS_UTILITY_SUBNETS="10.0.101.0/24,10.0.102.0/24,10.0.103.0/24" \
+    KOPS_AVAILABILITY_ZONES="ap-south-1a,ap-south-1b" \
+    BASTION_MACHINE_TYPE="t2.nano"
 
-ENV KOPS_BASTION_PUBLIC_NAME="bastion"
-ENV KOPS_PRIVATE_SUBNETS="172.20.32.0/19,172.20.64.0/19,172.20.96.0/19,172.20.128.0/19"
-ENV KOPS_UTILITY_SUBNETS="172.20.0.0/22,172.20.4.0/22,172.20.8.0/22,172.20.12.0/22"
-ENV KOPS_AVAILABILITY_ZONES="us-west-2a,us-west-2b,us-west-2c"
 ENV KUBECONFIG=/dev/shm/kubecfg
 RUN /usr/local/bin/kops completion bash > /etc/bash_completion.d/kops.sh
 
