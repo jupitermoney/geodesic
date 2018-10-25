@@ -1,7 +1,7 @@
 #
 # Cloud Posse Package Distribution
 #
-FROM cloudposse/packages:0.40.0 as packages
+FROM cloudposse/packages:0.42.0 as packages
 
 WORKDIR /packages
 
@@ -12,10 +12,7 @@ WORKDIR /packages
 #
 ARG PACKAGES="aws-iam-authenticator awless cfssl cfssljson chamber fetch figurine gomplate goofys helm helmfile kops kubectl kubens sops stern terraform yq"
 ENV PACKAGES=${PACKAGES}
-ENV KOPS_VERSION=1.11.0-alpha.1
-RUN make -C /packages/install kops
 RUN make dist
-
 
 #
 # Geodesic base image
