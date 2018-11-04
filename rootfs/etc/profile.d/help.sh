@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 function help() {
-cat<<__EOF__
+	cat <<__EOF__
 Available commands:
   leave-role      Leave the current role; run this to release your session
   assume-role     Assume a new role; run this to renew your session

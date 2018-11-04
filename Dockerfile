@@ -120,10 +120,11 @@ ENV SHELL=/bin/bash
 ENV LESS=-Xr
 ENV XDG_CONFIG_HOME=${CACHE_PATH}
 ENV SSH_AGENT_CONFIG=/var/tmp/.ssh-agent
+ENV TF_PLUGIN_CACHE_DIR="/localhost/.geodesic/tf-plugin/"
 
 COPY rootfs/ /
 
 WORKDIR /conf
 
 ENTRYPOINT ["/bin/bash"]
-CMD ["-c", "bootstrap"]
+CMD ["-c", "init"]

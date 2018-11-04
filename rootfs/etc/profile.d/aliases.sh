@@ -2,6 +2,7 @@
 # Setup some handy aliases
 alias kube-system='kubectl --namespace=kube-system'
 alias default='kubectl --namespace=default'
+alias telnet='busybox-extras telnet'
 alias k='kubectl'
 alias kaf='k apply -f'
 alias kccc='k config current-context'
