@@ -31,6 +31,7 @@ bash/fmt:
 
 bash/fmt/check:
 	shfmt -d $(PWD)/rootfs
+
 base:
 	docker build $(DOCKER_BUILD_FLAGS) $$BUILD_ARGS -t ${DOCKER_IMAGE}-base:debian -f $(DOCKER_FILE).base $(DOCKER_BUILD_PATH)
 	docker push $(DOCKER_IMAGE)-base:debian
