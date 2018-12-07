@@ -1,7 +1,7 @@
 #
 # Cloud Posse Package Distribution
 #
-FROM cloudposse/packages:0.42.0 as packages
+FROM cloudposse/packages:0.46.1 as packages
 
 WORKDIR /packages
 
