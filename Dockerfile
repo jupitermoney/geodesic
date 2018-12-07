@@ -10,7 +10,7 @@ WORKDIR /packages
 #
 # Repo: <https://github.com/cloudposse/packages>
 #
-ARG PACKAGES="aws-iam-authenticator awless cfssl cfssljson chamber direnv fetch figurine gomplate goofys helm helmfile kops kubectl kubens sops stern terraform yq"
+ARG PACKAGES="aws-iam-authenticator awless cfssl cfssljson chamber fetch figurine gomplate goofys helm helmfile kops kubectl kubens sops stern terraform yq"
 ENV PACKAGES=${PACKAGES}
 RUN make dist
 

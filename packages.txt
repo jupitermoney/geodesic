@@ -1,6 +1,7 @@
 bash-completion
 ca-certificates
 curl
+direnv
 figlet
 fuse
 gettext
