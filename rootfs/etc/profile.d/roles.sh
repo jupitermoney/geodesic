@@ -24,9 +24,11 @@ function assume-role() {
 		aws-google-auth ${AWS_VAULT_ARGS[@]} -p ${role} -r ${AWS_REGION} &&
 			export AWS_VAULT=${role}
 	fi
+	export AWS_PROFILE=${AWS_VAULT}
 }
 
 function leave-role() {
 	export AWS_DEFAULT_PROFILE=${AWS_TEMP_PROFILE:-default}
 	export AWS_VAULT=${AWS_DEFAULT_PROFILE}
+	export AWS_PROFILE=${AWS_VAULT}
 }
