@@ -25,10 +25,12 @@ function assume-role() {
 			export AWS_VAULT=${role}
 	fi
 	export AWS_PROFILE=${AWS_VAULT}
+	export TF_VAR_aws_assume_role_arn="arn:aws:iam::${TF_VAR_account_id}:role/${AWS_PROFILE}"
 }
 
 function leave-role() {
 	export AWS_DEFAULT_PROFILE=${AWS_TEMP_PROFILE:-default}
 	export AWS_VAULT=${AWS_DEFAULT_PROFILE}
 	export AWS_PROFILE=${AWS_VAULT}
+	export TF_VAR_aws_assume_role_arn="arn:aws:iam::${TF_VAR_account_id}:role/${AWS_PROFILE}"
 }
