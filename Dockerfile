@@ -1,7 +1,7 @@
 #
 # Cloud Posse Package Distribution
 #
-FROM cloudposse/packages:0.46.1 as packages
+FROM cloudposse/packages:0.68.0 as packages
 
 WORKDIR /packages
 
@@ -12,6 +12,10 @@ WORKDIR /packages
 #
 ARG PACKAGES="aws-iam-authenticator awless cfssl cfssljson chamber fetch figurine gomplate goofys helm helmfile kops kubectl kubens sops stern terraform yq"
 ENV PACKAGES=${PACKAGES}
+ENV KOPS_VERSION=1.11.0
+ENV HELM_VERSION=2.12.3
+ENV HELMFILE_VERSION=0.43.2
+RUN make -C /packages/install kops helm helmfile
 RUN make dist
 
 #
@@ -43,7 +47,7 @@ COPY --from=packages /dist/ /usr/local/bin/
 #
 # Install kubectl
 #
-ENV KUBERNETES_VERSION 1.10.8
+ENV KUBERNETES_VERSION 1.11.5
 ENV KUBECONFIG=${SECRETS_PATH}/kubernetes/kubeconfig
 RUN kubectl completion bash > /etc/bash_completion.d/kubectl.sh
 
