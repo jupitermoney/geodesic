@@ -17,7 +17,7 @@ RUN make dist
 #
 # Geodesic base image
 #
-FROM nikiai/geodesic-base:zsh
+FROM nikiai/geodesic-base:debian
 
 ENV BANNER "geodesic"
 
