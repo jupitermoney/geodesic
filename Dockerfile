@@ -100,6 +100,10 @@ ENV XDG_CONFIG_HOME=/etc
 
 # Clean up file modes for scripts
 RUN find ${XDG_CONFIG_HOME} -type f -name '*.sh' -exec chmod 755 {} \;
+RUN echo "LC_ALL=en_US.UTF-8" >> /etc/environment && \
+    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
+    echo "LANG=en_US.UTF-8" > /etc/locale.conf && \
+    locale-gen en_US.UTF-8
 
 COPY rootfs/ /
 
