@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # Geodesic Wrapper Script
 
 set -o pipefail
@@ -108,7 +107,9 @@ function use() {
 		if [ -d "$mount_path/c/Users/${windows_user_name}/AppData/Local/lxss/" ]; then
 			local_home=${user_local_app_data}/lxss${HOME}
 		else
-			shopt -s nullglob
+		    if [[ SHELL == /bin/bash ]]; then
+            	shopt -s nullglob
+            fi
 			for dir in $mount_path/c/Users/${windows_user_name}/AppData/Local/Packages/CanonicalGroupLimited.Ubuntu*; do
 				folder_name=$(basename ${dir})
 				local_home=${user_local_app_data}/Packages/${folder_name}/LocalState/rootfs${HOME}
@@ -130,9 +131,16 @@ function use() {
 	if [ "${local_home}" == "/localhost" ]; then
 		echo "WARNING: not mounting ${local_home} because it conflicts with geodesic"
 	else
-		echo "# Mounting ${local_home} into container"
-		DOCKER_ARGS+=(--volume=${local_home}:/localhost)
+		echo "# Mounting ${local_home}[/ops,/.aws/.geodesic] into container"
+		DOCKER_ARGS+=(--volume=${local_home}/ops:/localhost/ops:delegated \
+		--volume=${local_home}/.aws:/localhost/.aws:delegated \
+		--volume=${local_home}/.ssh:/localhost/.ssh:cached \
+		--volume=${local_home}/.geodesic:/localhost/.geodesic:delegated)
 	fi
+
+	if [ -s ${local_home}/.zprezto ]; then
+        DOCKER_ARGS+=(--volume=${local_home}/.zprezto:/conf/.zprezto:cached)
+    fi
 
 	DOCKER_ARGS+=(--privileged
 		--publish ${GEODESIC_PORT}:${GEODESIC_PORT}

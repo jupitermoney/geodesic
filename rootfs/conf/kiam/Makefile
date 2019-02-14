@@ -1,4 +1,4 @@
-export CHAMBER_SERVICE ?= kops
+export CHAMBER_SERVICE ?= eks
 export NAMESPACE ?= kube-system
 export IAM_ROLES ?= .*
 

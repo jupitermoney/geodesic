@@ -1,20 +1,10 @@
-.build-harness
-build-harness/
-aws-assumed-role/
-.idea/
+nohup.out
+.terraform
+terraform.tfstate*
+.git
+.idea
 *.iml
-
-#  Local .terraform directories
-**/.terraform/*
-
-# .tfstate files
-*.tfstate
-*.tfstate.*
-
-# .tfvars files
-*.tfvars
-*.git
-
-.viminfo
-.cache
-.bash_history
+.editorconfig
+build-harness
+.build-harness
+rootfs/templates/kube

@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # Setup some handy aliases
 alias kube-system='kubectl --namespace=kube-system'
 alias default='kubectl --namespace=default'
@@ -29,7 +28,7 @@ alias kgs='k get svc'
 alias kgsec='k get secret'
 alias kl='k logs'
 alias klf='k logs -f'
-alias kp='k proxy --address 0.0.0.0 --accept-hosts '.*' --port=$KUBERNETES_API_PORT'
+alias kp='k proxy --address 0.0.0.0 --accept-hosts '"'"'.*'"'"' --port=$KUBERNETES_API_PORT'
 alias krh='k rollout history'
 alias krsd='k rollout status deployment'
 alias kru='k rollout undo'

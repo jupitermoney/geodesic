@@ -1,7 +1,7 @@
 #
 # Cloud Posse Package Distribution
 #
-FROM cloudposse/packages:0.68.0 as packages
+FROM cloudposse/packages:0.73.0 as packages
 
 WORKDIR /packages
 
@@ -10,18 +10,14 @@ WORKDIR /packages
 #
 # Repo: <https://github.com/cloudposse/packages>
 #
-ARG PACKAGES="aws-iam-authenticator awless cfssl cfssljson chamber fetch figurine gomplate goofys helm helmfile kops kubectl kubens sops stern terraform yq"
+ARG PACKAGES="atlantis aws-iam-authenticator awless cfssl cfssljson chamber direnv fetch figurine gomplate goofys helm helmfile kubectl kubens sops stern terraform terragrunt tfmask yq"
 ENV PACKAGES=${PACKAGES}
-ENV KOPS_VERSION=1.11.0
-ENV HELM_VERSION=2.12.3
-ENV HELMFILE_VERSION=0.43.2
-RUN make -C /packages/install kops helm helmfile
 RUN make dist
 
 #
 # Geodesic base image
 #
-FROM nikiai/geodesic-base:debian
+FROM nikiai/geodesic-base:zsh
 
 ENV BANNER "geodesic"
 
@@ -30,7 +26,7 @@ ENV CACHE_PATH=/localhost/.geodesic
 
 ENV GEODESIC_PATH=/usr/local/include/toolbox
 ENV HOME=/conf
-ENV KOPS_CLUSTER_NAME=example.foo.bar
+ENV CLUSTER_NAME=example.foo.bar
 
 #
 # Python Dependencies
@@ -45,41 +41,12 @@ COPY --from=packages /packages/install/ /packages/install/
 COPY --from=packages /dist/ /usr/local/bin/
 
 #
-# Install kubectl
+# kubectl
 #
-ENV KUBERNETES_VERSION 1.11.5
-ENV KUBECONFIG=${SECRETS_PATH}/kubernetes/kubeconfig
-RUN kubectl completion bash > /etc/bash_completion.d/kubectl.sh
+ENV KUBECONFIG=/k8/kubeconfig
 
 #
-# Install kops
-#
-
-ENV KOPS_STATE_STORE_REGION=ap-south-1 \
-    KOPS_FEATURE_FLAGS=+DrainAndValidateRollingUpdate \
-    KOPS_MANIFEST=/conf/kops/manifest.yaml \
-    KOPS_TEMPLATE=/templates/kops/default.yaml \
-    KOPS_BASE_IMAGE=coreos.com/CoreOS-stable-1800.0.0-hvm \
-    KOPS_BASTION_PUBLIC_NAME="bastion" \
-    KOPS_PRIVATE_SUBNETS="10.0.1.0/24,10.0.2.0/24,10.0.3.0/24" \
-    KOPS_UTILITY_SUBNETS="10.0.101.0/24,10.0.102.0/24,10.0.103.0/24" \
-    KOPS_AVAILABILITY_ZONES="ap-south-1a,ap-south-1b" \
-    BASTION_MACHINE_TYPE="t2.nano"
-
-ENV KUBECONFIG=/dev/shm/kubecfg
-RUN /usr/local/bin/kops completion bash > /etc/bash_completion.d/kops.sh
-
-# Instance sizes
-ENV BASTION_MACHINE_TYPE "t2.medium"
-ENV MASTER_MACHINE_TYPE "t2.medium"
-ENV NODE_MACHINE_TYPE "t2.medium"
-
-# Min/Max number of nodes (aka workers)
-ENV NODE_MAX_SIZE 2
-ENV NODE_MIN_SIZE 2
-
-#
-# Install helm
+# helm
 #
 ENV HELM_HOME /var/lib/helm
 ENV HELM_VALUES_PATH=${SECRETS_PATH}/helm/values
@@ -91,8 +58,7 @@ RUN helm completion bash > /etc/bash_completion.d/helm.sh \
 #
 # Install helm repos
 #
-RUN helm repo add cloudposse-incubator https://charts.cloudposse.com/incubator/ \
-    && helm repo add incubator  https://kubernetes-charts-incubator.storage.googleapis.com/ \
+RUN helm repo add incubator  https://kubernetes-charts-incubator.storage.googleapis.com/ \
     && helm repo add coreos-stable https://s3-eu-west-1.amazonaws.com/coreos-charts/stable/ \
     && helm repo update
 
@@ -120,11 +86,20 @@ ENV AWS_SHARED_CREDENTIALS_FILE=/localhost/.aws/credentials
 # Shell
 #
 ENV HISTFILE=${CACHE_PATH}/history
-ENV SHELL=/bin/bash
+ENV SHELL=/bin/zsh
 ENV LESS=-Xr
-ENV XDG_CONFIG_HOME=${CACHE_PATH}
 ENV SSH_AGENT_CONFIG=/var/tmp/.ssh-agent
-ENV TF_PLUGIN_CACHE_DIR="/localhost/.geodesic/tf-plugin/"
+
+# Reduce `make` verbosity
+ENV MAKEFLAGS="--no-print-directory"
+ENV MAKE_INCLUDES="Makefile Makefile.*"
+
+# This is not a "multi-user" system, so we'll use `/etc` as the global configuration dir
+# Read more: <https://wiki.archlinux.org/index.php/XDG_Base_Directory>
+ENV XDG_CONFIG_HOME=/etc
+
+# Clean up file modes for scripts
+RUN find ${XDG_CONFIG_HOME} -type f -name '*.sh' -exec chmod 755 {} \;
 
 COPY rootfs/ /
 

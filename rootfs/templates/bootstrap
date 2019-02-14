@@ -1,4 +1,3 @@
-#!/bin/bash
 export DOCKER_IMAGE="{{getenv "DOCKER_IMAGE" "cloudposse/geodesic"}}"
 export DOCKER_TAG="{{getenv "DOCKER_TAG" "${1:-dev}"}}"
 export APP_NAME=${APP_NAME:-$(basename $DOCKER_IMAGE)}

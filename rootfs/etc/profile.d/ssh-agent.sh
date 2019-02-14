@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # Attempt Re-use existing agent if one exists
 if [ -f "${SSH_AGENT_CONFIG}" ]; then
 	echo "* Found SSH agent config"

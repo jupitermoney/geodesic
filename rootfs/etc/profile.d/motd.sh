@@ -1,7 +1,9 @@
-#!/usr/bin/env bash
-if [ -z "${AWS_VAULT}" ]; then
+if [ -z "${ASSUME_ROLE}" ]; then
 	if [ -f "/etc/motd" ]; then
 		cat "/etc/motd"
+		if [ -z "${ENABLE_K8_NOTIFICATION}" ]; then
+			kubectl get pods --all-namespaces|grep -E 'CrashLoopBackOff|Pending|Error'
+		fi
 	fi
 
 	if [ -n "${MOTD_URL}" ]; then

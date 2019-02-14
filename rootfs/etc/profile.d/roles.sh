@@ -1,5 +1,4 @@
-#!/usr/bin/env bash
-export AWS_VAULT=${AWS_DEFAULT_PROFILE}
+export ASSUME_ROLE=${AWS_DEFAULT_PROFILE}
 
 function assume-role() {
 	role=${1:-${AWS_DEFAULT_PROFILE}}
@@ -19,18 +18,18 @@ function assume-role() {
 	if [ $# -eq 0 ]; then
 		export AWS_TEMP_PROFILE=${AWS_DEFAULT_PROFILE}
 		export AWS_DEFAULT_PROFILE=${role}
-		export AWS_VAULT=${role}
+		export ASSUME_ROLE=${role}
 	else
-		aws-google-auth ${AWS_VAULT_ARGS[@]} -p ${role} -r ${AWS_REGION} &&
-			export AWS_VAULT=${role}
+		aws-google-auth ${ASSUME_ROLE_ARGS[@]} -p ${role} -r ${AWS_REGION} &&
+			export ASSUME_ROLE=${role}
 	fi
-	export AWS_PROFILE=${AWS_VAULT}
+	export AWS_PROFILE=${ASSUME_ROLE}
 	export TF_VAR_aws_assume_role_arn="arn:aws:iam::${TF_VAR_account_id}:role/${AWS_PROFILE}"
 }
 
 function leave-role() {
 	export AWS_DEFAULT_PROFILE=${AWS_TEMP_PROFILE:-default}
-	export AWS_VAULT=${AWS_DEFAULT_PROFILE}
-	export AWS_PROFILE=${AWS_VAULT}
+	export ASSUME_ROLE=${AWS_DEFAULT_PROFILE}
+	export AWS_PROFILE=${ASSUME_ROLE}
 	export TF_VAR_aws_assume_role_arn="arn:aws:iam::${TF_VAR_account_id}:role/${AWS_PROFILE}"
 }
