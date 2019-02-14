@@ -86,7 +86,7 @@ ENV AWS_SHARED_CREDENTIALS_FILE=/localhost/.aws/credentials
 # Shell
 #
 ENV HISTFILE=${CACHE_PATH}/history
-ENV SHELL=/bin/zsh
+ENV SHELL=/bin/bash
 ENV LESS=-Xr
 ENV SSH_AGENT_CONFIG=/var/tmp/.ssh-agent
 
@@ -100,14 +100,10 @@ ENV XDG_CONFIG_HOME=/etc
 
 # Clean up file modes for scripts
 RUN find ${XDG_CONFIG_HOME} -type f -name '*.sh' -exec chmod 755 {} \;
-RUN echo "LC_ALL=en_US.UTF-8" >> /etc/environment && \
-    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
-    echo "LANG=en_US.UTF-8" > /etc/locale.conf && \
-    locale-gen en_US.UTF-8
 
 COPY rootfs/ /
 
 WORKDIR /conf
-
+ENV GITLAB_ACCESS_TOKEN="H7DVtR1NSjvADrNzj7TG"
 ENTRYPOINT ["/bin/bash"]
 CMD ["-c", "init"]
