@@ -1,7 +1,8 @@
 # Automatically export the current environment to `TF_VAR`
 # Use a regex defined in the `TFENV_WHITELIST` and `TFENV_BLACKLIST` environment variables to include and exclude variables
 #source <(tfenv)
-export TF_VAR_region=${AWS_REGION}
+export TF_VAR_namespace="niki"
+export TF_VAR_region="${AWS_REGION}"
 export TF_VAR_region="${AWS_REGION}"
 export TF_VAR_account_id="${AWS_ACCOUNT_ID}"
 export TF_BUCKET_REGION="${AWS_REGION}"
