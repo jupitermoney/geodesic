@@ -1,10 +1,10 @@
 # Source Prezto.
-
+export ZDOTDIR=/root
 if [[ ! -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
-    ln -s $HOME/.zprezto/runcoms/zlogout ${ZDOTDIR:-$HOME}/.zlogout
-    ln -s $HOME/.zprezto/runcoms/zpreztorc ${ZDOTDIR:-$HOME}/.zpreztorc
-    ln -s $HOME/.zprezto/runcoms/zprofile ${ZDOTDIR:-$HOME}/.zprofile
-    ln -s $HOME/.zprezto/runcoms/zshenv ${ZDOTDIR:-$HOME}/.zshenv
+    ln -s ${ZDOTDIR:-$HOME}/.zprezto/runcoms/zlogout ${ZDOTDIR:-$HOME}/.zlogout
+    ln -s ${ZDOTDIR:-$HOME}/.zprezto/runcoms/zpreztorc ${ZDOTDIR:-$HOME}/.zpreztorc
+    ln -s ${ZDOTDIR:-$HOME}/.zprezto/runcoms/zprofile ${ZDOTDIR:-$HOME}/.zprofile
+    ln -s ${ZDOTDIR:-$HOME}/.zprezto/runcoms/zshenv ${ZDOTDIR:-$HOME}/.zshenv
 fi
 
 setopt EXTENDED_GLOB
@@ -25,7 +25,6 @@ fi
 export KEYTIMEOUT=1
 export EDITOR=vi
 export VIRTUAL_ENV_DISABLE_PROMPT=true
-export GITLAB_ACCESS_TOKEN=H7DVtR1NSjvADrNzj7TG
 
 # Add colors to Terminal
 export CLICOLOR=1

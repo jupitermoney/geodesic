@@ -18,3 +18,4 @@ python-setuptools
 sshpass
 syslog-ng
 vim
+zsh

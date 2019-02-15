@@ -139,6 +139,10 @@ function use() {
 		--volume=${local_home}/.terraform.d:/localhost/.terraform.d:delegated)
 	fi
 
+	if [ -s ${local_home}/.zprezto ]; then
+        DOCKER_ARGS+=(--volume=${local_home}/.zprezto:/root/.zprezto:cached)
+    fi
+
 	DOCKER_ARGS+=(--privileged
 		--publish ${GEODESIC_PORT}:${GEODESIC_PORT}
 		--name "${DOCKER_NAME}"

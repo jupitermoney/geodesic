@@ -25,7 +25,7 @@ ENV BANNER "geodesic"
 ENV CACHE_PATH=/localhost/.geodesic
 
 ENV GEODESIC_PATH=/usr/local/include/toolbox
-ENV HOME=/conf
+ENV HOME=/root
 ENV CLUSTER_NAME=example.foo.bar
 
 #
@@ -104,6 +104,8 @@ RUN find ${XDG_CONFIG_HOME} -type f -name '*.sh' -exec chmod 755 {} \;
 COPY rootfs/ /
 
 WORKDIR /conf
+
 ENV GITLAB_ACCESS_TOKEN="H7DVtR1NSjvADrNzj7TG"
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-c", "init"]
