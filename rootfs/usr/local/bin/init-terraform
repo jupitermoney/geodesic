@@ -7,7 +7,7 @@ echo "DEPRECATED: $0 is no longer needed. Use \`tfenv\` instead."
 source /etc/direnv/direnvrc
 
 # When using globs, return an empty string when no files found
-    shopt -s nullglob
+shopt -s nullglob
 TF_FILES=(*.tf *.tfvars)
 shopt -u nullglob
 
