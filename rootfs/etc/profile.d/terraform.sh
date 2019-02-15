@@ -15,4 +15,4 @@ if [ -x '/usr/bin/terraform' ]; then
 fi
 
 # Set default plugin cache dir
-export TF_PLUGIN_CACHE_DIR="${TF_PLUGIN_CACHE_DIR:-/localhost/.geodesic/tf-plugins}"
+export TF_PLUGIN_CACHE_DIR="${TF_PLUGIN_CACHE_DIR:-/localhost/.terraform.d/plugins}"

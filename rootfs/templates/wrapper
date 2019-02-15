@@ -135,12 +135,9 @@ function use() {
 		DOCKER_ARGS+=(--volume=${local_home}/ops:/localhost/ops:delegated \
 		--volume=${local_home}/.aws:/localhost/.aws:delegated \
 		--volume=${local_home}/.ssh:/localhost/.ssh:cached \
-		--volume=${local_home}/.geodesic:/localhost/.geodesic:delegated)
+		--volume=${local_home}/.geodesic:/localhost/.geodesic:delegated \
+		--volume=${local_home}/.terraform.d:/localhost/.terraform.d:delegated)
 	fi
-
-	if [ -s ${local_home}/.zprezto ]; then
-        DOCKER_ARGS+=(--volume=${local_home}/.zprezto:/conf/.zprezto:cached)
-    fi
 
 	DOCKER_ARGS+=(--privileged
 		--publish ${GEODESIC_PORT}:${GEODESIC_PORT}
