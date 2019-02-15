@@ -24,12 +24,10 @@ function assume-role() {
 			export ASSUME_ROLE=${role}
 	fi
 	export AWS_PROFILE=${ASSUME_ROLE}
-	export TF_VAR_aws_assume_role_arn="arn:aws:iam::${TF_VAR_account_id}:role/${AWS_PROFILE}"
 }
 
 function leave-role() {
 	export AWS_DEFAULT_PROFILE=${AWS_TEMP_PROFILE:-default}
 	export ASSUME_ROLE=${AWS_DEFAULT_PROFILE}
 	export AWS_PROFILE=${ASSUME_ROLE}
-	export TF_VAR_aws_assume_role_arn="arn:aws:iam::${TF_VAR_account_id}:role/${AWS_PROFILE}"
 }

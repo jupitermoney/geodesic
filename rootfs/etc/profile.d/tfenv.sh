@@ -10,3 +10,4 @@ export TF_VAR_domain_name="${TF_VAR_stage}.niki.ai"
 export TF_VAR_gitlab_token="${GITLAB_ACCESS_TOKEN}"
 export TF_CLI_PLAN_PARALLELISM=2
 export MAKE_INCLUDES="Makefile Makefile.*"
+export TF_VAR_aws_assume_role_arn="arn:aws:iam::${TF_VAR_account_id}:role/${ASSUME_ROLE}"

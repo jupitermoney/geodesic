@@ -21,8 +21,7 @@ fi
 [ -z "${TF_BUCKET}" ] || TF_ARGS+=("-backend-config=bucket=${TF_BUCKET}")
 [ -z "${TF_BUCKET_REGION}" ] || TF_ARGS+=("-backend-config=region=${TF_BUCKET_REGION}")
 [ -z "${TF_DYNAMODB_TABLE}" ] || TF_ARGS+=("-backend-config=dynamodb_table=${TF_DYNAMODB_TABLE}")
-[ -z "${AWS_PROFILE}" ] || TF_ARGS+=("-backend-config=profile=${AWS_PROFILE}")
-[ -z "${TF_VAR_aws_assume_role_arn}" ] || TF_ARGS+=("-backend-config=role_arn=${TF_VAR_aws_assume_role_arn}")
+[ -z "${ASSUME_ROLE}" ] || TF_ARGS+=("-backend-config=profile=${ASSUME_ROLE}")
 
 s3 mount
 
