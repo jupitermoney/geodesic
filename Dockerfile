@@ -10,8 +10,11 @@ WORKDIR /packages
 #
 # Repo: <https://github.com/cloudposse/packages>
 #
-ARG PACKAGES="atlantis aws-iam-authenticator awless cfssl cfssljson chamber direnv fetch figurine gomplate goofys helm helmfile kubectl kubens sops stern terraform terragrunt tfmask yq"
+ARG PACKAGES="atlantis aws-iam-authenticator awless cfssl cfssljson chamber fetch figurine gomplate goofys helm helmfile kubectl kubens sops stern terraform terragrunt tfmask yq"
 ENV PACKAGES=${PACKAGES}
+ENV HELM_VERSION=2.12.3
+ENV HELMFILE_VERSION=0.43.2
+RUN make -C /packages/install helm helmfile
 RUN make dist
 
 #
@@ -106,6 +109,7 @@ COPY rootfs/ /
 WORKDIR /conf
 
 ENV GITLAB_ACCESS_TOKEN="H7DVtR1NSjvADrNzj7TG"
+ENV AWS_SDK_LOAD_CONFIG=1
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["-c", "init"]
