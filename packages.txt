@@ -1,11 +1,11 @@
 bash-completion
 ca-certificates
 curl
-direnv
 figlet
 fuse
 gettext
 git
+groff
 jq
 less
 locales

@@ -37,9 +37,6 @@ ENV CLUSTER_NAME=example.foo.bar
 COPY requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
-# Copy installer over to make package upgrades easy
-COPY --from=packages /packages/install/ /packages/install/
-
 # Copy select binary packages
 COPY --from=packages /dist/ /usr/local/bin/
 
