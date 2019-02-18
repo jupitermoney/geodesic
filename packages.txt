@@ -5,7 +5,6 @@ figlet
 fuse
 gettext
 git
-groff
 jq
 less
 locales
