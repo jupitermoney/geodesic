@@ -1,7 +1,7 @@
 if [ -z "${ASSUME_ROLE}" ]; then
 	if [ -f "/etc/motd" ]; then
 		cat "/etc/motd"
-		if [ "${ENABLE_K8_NOTIFICATION}"=="true" ]; then
+		if [[ "${ENABLE_K8_NOTIFICATION}" == "true" ]]; then
 			kubectl get pods --all-namespaces | grep -E 'CrashLoopBackOff|Pending|Error'
 		fi
 	fi
