@@ -133,10 +133,10 @@ function use() {
 	else
 		echo "# Mounting ${local_home}[/ops,/.aws/.geodesic] into container"
 		DOCKER_ARGS+=(--volume=${local_home}/ops:/localhost/ops:delegated \
-		--volume=${local_home}/.aws:/localhost/.aws:delegated \
+		--volume=${local_home}/.aws:/localhost/.aws \
 		--volume=${local_home}/.ssh:/localhost/.ssh:cached \
-		--volume=${local_home}/.geodesic:/localhost/.geodesic:delegated \
-		--volume=${local_home}/.terraform.d:/localhost/.terraform.d:delegated)
+		--volume=${local_home}/.geodesic:/localhost/.geodesic \
+		--volume=${local_home}/.terraform.d:/localhost/.terraform.d)
 	fi
 
 	if [ -s ${local_home}/.zprezto ]; then
