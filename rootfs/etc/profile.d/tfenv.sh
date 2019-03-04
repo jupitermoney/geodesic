@@ -17,3 +17,5 @@ export TF_BUCKET="${TF_VAR_namespace}-${TF_VAR_stage}-terraform-state"
 
 # Filesystem entry for tfstate
 s3 fstab "${TF_BUCKET}" "/" "/secrets/tf"
+s3 mount
+export KUBECONFIG="/conf/eks/kubeconfig_${TF_VAR_domain_name}"

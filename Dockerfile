@@ -41,11 +41,6 @@ RUN pip install --no-cache-dir -r /tmp/requirements.txt
 COPY --from=packages /dist/ /usr/local/bin/
 
 #
-# kubectl
-#
-ENV KUBECONFIG=/k8/kubeconfig
-
-#
 # helm
 #
 ENV HELM_HOME /var/lib/helm
