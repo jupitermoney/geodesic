@@ -17,5 +17,13 @@ export TF_BUCKET="${TF_VAR_namespace}-${TF_VAR_stage}-terraform-state"
 
 # Filesystem entry for tfstate
 s3 fstab "${TF_BUCKET}" "/" "/secrets/tf"
-s3 mount
+
+isMounted() { findmnt -rno SOURCE,TARGET "$1" >/dev/null;}
+if isMounted "/secrets/tf";
+   then echo "already mounted in another shell"
+   else s3 mount
+fi
 export KUBECONFIG=$(echo "/conf/eks/kubeconfig_${TF_VAR_domain_name}" | sed -e "s/\./_/g")
+if [[ "${ENABLE_K8_NOTIFICATION}" == "true" ]]; then
+	kubectl get pods --all-namespaces | grep -E 'CrashLoopBackOff|Pending|Error'
+fi
