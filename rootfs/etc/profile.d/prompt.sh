@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # Allow bash to check the window size to keep prompt with relative to window size
-shopt -s checkwinsize
 
 # Cache the current screen size
 export SCREEN_SIZE="${LINES}x${COLUMNS}"

@@ -7,10 +7,8 @@ if [[ ! -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
     ln -s ${ZDOTDIR:-$HOME}/.zprezto/runcoms/zshenv ${ZDOTDIR:-$HOME}/.zshenv
 fi
 
-setopt EXTENDED_GLOB
-for file in /etc/init.d/*.sh; do
-  source $file
-done
+autoload bashcompinit
+bashcompinit
 
 setopt EXTENDED_GLOB
 for file in /etc/profile.d/*.sh; do
