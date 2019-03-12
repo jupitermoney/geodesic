@@ -22,6 +22,7 @@ fi
 # export
 export KEYTIMEOUT=1
 export EDITOR=vi
+export HISTFILE=/localhost/.geodesic/.zhistory
 export VIRTUAL_ENV_DISABLE_PROMPT=true
 
 # Add colors to Terminal
