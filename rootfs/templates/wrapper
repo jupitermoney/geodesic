@@ -136,7 +136,6 @@ function use() {
 		--volume=${local_home}/.aws:/localhost/.aws \
 		--volume=${local_home}/.ssh:/localhost/.ssh:cached \
 		--volume=${local_home}/.geodesic:/localhost/.geodesic \
-		--volume=${local_home}/.zhistory:/root/.zhistory \
 		--volume=${local_home}/.terraform.d:/localhost/.terraform.d)
 	fi
 
