@@ -35,7 +35,7 @@ ENV CLUSTER_NAME=example.foo.bar
 # Python Dependencies
 #
 COPY requirements.txt /tmp/requirements.txt
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
+RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
 
 # Copy select binary packages
 COPY --from=packages /dist/ /usr/local/bin/
