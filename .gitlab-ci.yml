@@ -17,6 +17,6 @@ build-master:
     - make bash/fmt/check
     - make base
     - make docker/build
-    - make travis/docker-tag-and-push
+    - docker push nikiai/geodesic:latest
   only:
     - master
