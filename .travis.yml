@@ -1,25 +1,32 @@
-sudo: required
-addons:
-  apt:
-    packages:
-    - git
-    - make
-    - curl
-env:
-  - DOCKER_IMAGE_NAME=nikiai/geodesic
-services:
-- docker
-install:
-- make init
-- make travis/docker-login
-- make packages/reinstall/shfmt
-- make bash/fmt/check
+kind: pipeline
+name: default
 
-script:
-- make deps
-- make lint
-- make base
-- make docker/build
+clone:
+  depth: 1
 
-after_success:
-- make travis/docker-tag-and-push
+steps:
+  - name: validate
+    image: cloudposse/build-harness
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+        DOCKERHUB_USERNAME:
+            from_secret: DOCKERHUB_USERNAME
+        DOCKERHUB_PASSWORD:
+            from_secret: DOCKERHUB_PASSWORD
+    commands:
+      - apk --update --no-cache add docker
+      - make init
+      - make lint
+      - make travis/docker-login
+      - make packages/reinstall/shfmt
+      - make bash/fmt/check
+      - make base
+      - make docker/build
+      - make travis/docker-tag-and-push
+
+trigger:
+  branch:
+    - master
+  event:
+    - push
