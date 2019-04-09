@@ -1,0 +1,22 @@
+image: docker:latest
+
+services:
+  - docker:dind
+
+before_script:
+  - apk add --update make curl bash git
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+
+build-master:
+  stage: build
+  script:
+    - docker pull nikiai/geodesic
+    - make init
+    - make lint
+    - make packages/reinstall/shfmt
+    - make bash/fmt/check
+    - make base
+    - make docker/build
+    - make travis/docker-tag-and-push
+  only:
+    - master
