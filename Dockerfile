@@ -12,8 +12,8 @@ WORKDIR /packages
 #
 ARG PACKAGES="atlantis aws-iam-authenticator awless cfssl cfssljson chamber fetch figurine gomplate goofys helm helmfile kubectl kubens sops stern terraform terragrunt tfmask yq"
 ENV PACKAGES=${PACKAGES}
-ENV HELM_VERSION=2.13.0
-ENV HELMFILE_VERSION=0.45.3
+ENV HELM_VERSION=2.13.1
+ENV HELMFILE_VERSION=0.54.0
 RUN make -C /packages/install helm helmfile
 RUN make dist
 
