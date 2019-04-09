@@ -8,7 +8,8 @@ steps:
   - name: validate
     image: cloudposse/build-harness
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - name: docker
+        path: /var/run/docker.sock
     environment:
         DOCKERHUB_USERNAME:
             from_secret: DOCKERHUB_USERNAME
@@ -30,3 +31,8 @@ trigger:
     - master
   event:
     - push
+
+volumes:
+  - name: docker
+    host:
+      path: /var/run/docker.sock
