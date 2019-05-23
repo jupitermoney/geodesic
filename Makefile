@@ -1,12 +1,13 @@
-export DOCKER_IMAGE ?= nikiai/geodesic
+export DOCKER_ORG ?= nikiai
+export DOCKER_IMAGE ?= $(DOCKER_ORG)/geodesic
 export DOCKER_TAG ?= latest
 export DOCKER_IMAGE_NAME ?= $(DOCKER_IMAGE):$(DOCKER_TAG)
 export DOCKER_BUILD_FLAGS = 
 export INSTALL_PATH ?= /usr/local/bin
 
-include $(shell curl --silent -o .build-harness "https://raw.githubusercontent.com/cloudposse/build-harness/master/templates/Makefile.build-harness"; echo .build-harness)
+-include $(shell curl -sSL -o .build-harness "https://git.io/build-harness"; echo .build-harness)
 
-all: init deps lint build install run
+all: init deps lint bash/fmt build
 
 lint:
 	@LINT=true \
@@ -19,12 +20,6 @@ deps:
 
 build:
 	@make --no-print-directory docker:build
-
-install:
-	@docker run --rm -e CLUSTER=galaxy $(DOCKER_IMAGE_NAME) | sudo -E bash -s $(DOCKER_TAG)
-
-run:
-	@geodesic
 
 bash/fmt:
 	shfmt -l -w $(PWD)

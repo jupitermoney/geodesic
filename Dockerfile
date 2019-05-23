@@ -1,23 +1,4 @@
 #
-# Cloud Posse Package Distribution
-#
-FROM cloudposse/packages:0.86.0 as packages
-
-WORKDIR /packages
-
-#
-# Install the select packages from the cloudposse package manager image
-#
-# Repo: <https://github.com/cloudposse/packages>
-#
-ARG PACKAGES="atlantis aws-iam-authenticator awless cfssl cfssljson chamber fetch figurine gomplate goofys helm helmfile kubectl kubens sops stern terraform terragrunt tfmask yq"
-ENV PACKAGES=${PACKAGES}
-ENV HELM_VERSION=2.13.1
-ENV HELMFILE_VERSION=0.54.0
-RUN make -C /packages/install helm helmfile
-RUN make dist
-
-#
 # Geodesic base image
 #
 FROM nikiai/geodesic-base:debian
@@ -29,16 +10,25 @@ ENV CACHE_PATH=/localhost/.geodesic
 
 ENV GEODESIC_PATH=/usr/local/include/toolbox
 ENV HOME=/root
-ENV CLUSTER_NAME=example.foo.bar
+ENV CLUSTER_NAME=example.niki.ai
+
+#
+# Install the select packages from the cloudposse package manager image
+#
+# Repo: <https://github.com/cloudposse/packages>
+#
+ARG PACKAGES="aws-iam-authenticator awless cfssl cfssljson chamber fetch figurine gomplate goofys helm helmfile kubectl kubens sops stern terraform terragrunt tfmask yq"
+ENV PACKAGES=${PACKAGES}
+RUN git clone --depth=1 -b master https://github.com/rverma-nikiai/packages.git && \
+    rm -rf packages/.git
+RUN make -C /packages/install ${PACKAGES} INSTALL_PATH=/usr/local/bin/
+
 
 #
 # Python Dependencies
 #
 COPY requirements.txt /tmp/requirements.txt
 RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
-
-# Copy select binary packages
-COPY --from=packages /dist/ /usr/local/bin/
 
 #
 # helm
