@@ -16,5 +16,6 @@ python3-pip
 python3-setuptools
 sshpass
 syslog-ng
+unzip
 vim
 zsh
