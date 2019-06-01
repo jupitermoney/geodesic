@@ -32,4 +32,4 @@ base:
 	docker push nikiai/geodesic-base:debian
 
 push:
-	@make --no-print-directory docker:push
+	@docker push $(DOCKER_IMAGE_NAME)

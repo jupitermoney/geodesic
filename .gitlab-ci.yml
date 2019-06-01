@@ -10,13 +10,11 @@ before_script:
 build-master:
   stage: build
   script:
-    - docker pull nikiai/geodesic
     - make init
     - make lint
     - make packages/reinstall/shfmt
     - make bash/fmt/check
-#    - make base
     - make docker/build
-    - docker push nikiai/geodesic:latest
+    - make push
   only:
     - master
