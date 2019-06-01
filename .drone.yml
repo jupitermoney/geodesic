@@ -4,24 +4,23 @@ name: default
 steps:
   - name: build-image
     image: docker:dind
+    volumes:
+        - name: dockersock
+          path: /var/run/docker.sock
     environment:
       json_key:
         from_secret: gcr_json_key
-    volumes:
-      - name: dockersock
-        path: /var/run
     commands:
-      - sleep 5 # give docker enough time to start
       - apk add --update make curl bash git
       - echo $json_key | docker login https://asia.gcr.io -u _json_key --password-stdin
       - make init
       - make lint
       - make packages/reinstall/shfmt
       - make bash/fmt/check
-      - make base
       - make docker/build
       - make push
 
 volumes:
   - name: dockersock
-    temp: {}
+    host:
+      path: /var/run/docker.sock
