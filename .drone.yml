@@ -17,9 +17,8 @@ steps:
       - make lint
       - make packages/reinstall/shfmt
       - make bash/fmt/check
-      - docker ps -a
-#      - make docker/build
-#      - make push
+      - make docker/build
+      - make push
 
 services:
   - name: docker
