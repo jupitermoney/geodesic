@@ -6,22 +6,29 @@ steps:
     image: docker:dind
     volumes:
       - name: dockersock
-        path: /var/run/docker.sock
+        path: /var/run
     environment:
       json_key:
         from_secret: gcr_json_key
     commands:
       - apk add --update make curl bash git
+      - echo $json_key | docker login https://asia.gcr.io -u _json_key --password-stdin
+      - make init
+      - make lint
+      - make packages/reinstall/shfmt
+      - make bash/fmt/check
       - docker ps -a
-#      - echo $json_key | docker login https://asia.gcr.io -u _json_key --password-stdin
-#      - make init
-#      - make lint
-#      - make packages/reinstall/shfmt
-#      - make bash/fmt/check
 #      - make docker/build
 #      - make push
 
+services:
+  - name: docker
+    image: docker:dind
+    privileged: true
+    volumes:
+      - name: dockersock
+        path: /var/run
+
 volumes:
   - name: dockersock
-    host:
-      path: /var/run/docker.sock
+    temp: {}
