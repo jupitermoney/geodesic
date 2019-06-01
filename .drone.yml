@@ -1,0 +1,35 @@
+kind: pipeline
+name: default
+
+steps:
+  - name: build-image
+    image: docker:dind
+    environment:
+      json_key:
+        from_secret: gcr_json_key
+    volumes:
+      - name: dockersock
+        path: /var/run
+    commands:
+      - sleep 5 # give docker enough time to start
+      - apk add --update make curl bash git
+      - echo $json_key | docker login -u _json_key https://asia.gcr.io
+      - make init
+      - make lint
+      - make packages/reinstall/shfmt
+      - make bash/fmt/check
+      - make base
+      - make docker/build
+      - make push
+
+services:
+  - name: docker
+    image: docker:dind
+    privileged: true
+    volumes:
+      - name: dockersock
+        path: /var/run
+
+volumes:
+  - name: dockersock
+    temp: {}

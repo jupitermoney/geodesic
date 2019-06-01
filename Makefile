@@ -1,4 +1,4 @@
-export DOCKER_ORG ?= nikiai
+export DOCKER_ORG ?= asia.gcr.io/niki-ai
 export DOCKER_IMAGE ?= $(DOCKER_ORG)/geodesic
 export DOCKER_TAG ?= latest
 export DOCKER_IMAGE_NAME ?= $(DOCKER_IMAGE):$(DOCKER_TAG)
@@ -30,3 +30,6 @@ bash/fmt/check:
 base:
 	docker build $(DOCKER_BUILD_FLAGS) $$BUILD_ARGS -t ${DOCKER_IMAGE}-base:debian -f $(DOCKER_FILE).base $(DOCKER_BUILD_PATH)
 	#docker push $(DOCKER_IMAGE)-base:debian
+
+push:
+	@make --no-print-directory docker:push
