@@ -11,7 +11,7 @@ steps:
       json_key:
         from_secret: gcr_json_key
     commands:
-      - apk add --update make curl bash git unzip
+      - apk add --update make curl bash git
       - echo $json_key | docker login https://asia.gcr.io -u _json_key --password-stdin
       - make init
       - make lint
