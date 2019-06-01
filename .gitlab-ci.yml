@@ -15,7 +15,7 @@ build-master:
     - make lint
     - make packages/reinstall/shfmt
     - make bash/fmt/check
-    - make base
+#    - make base
     - make docker/build
     - docker push nikiai/geodesic:latest
   only:
