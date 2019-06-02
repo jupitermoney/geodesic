@@ -10,6 +10,16 @@ before_script:
   - apk add --update make curl bash git
   - echo $json_key | docker login https://asia.gcr.io -u _json_key --password-stdin
 
+build-base:
+  stage: build
+  script:
+    - make base
+  only:
+    changes:
+      - Dockerfile.base
+    refs:
+      - master
+
 build-master:
   stage: build
   script:
@@ -20,4 +30,5 @@ build-master:
     - make docker/build
     - make push
   only:
-    - master
+    refs:
+      - master
