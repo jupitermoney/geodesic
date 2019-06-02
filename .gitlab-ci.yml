@@ -23,15 +23,15 @@ build-base:
     refs:
       - master
 
-build-master:
-  stage: build
-  script:
-    - make init
-    - make lint
-    - make packages/reinstall/shfmt
-    - make bash/fmt/check
-    - make docker/build
-    - make push
-  only:
-    refs:
-      - master
+#build-master:
+#  stage: build
+#  script:
+#    - make init
+#    - make lint
+#    - make packages/reinstall/shfmt
+#    - make bash/fmt/check
+#    - make docker/build
+#    - make push
+#  only:
+#    refs:
+#      - master
