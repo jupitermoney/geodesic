@@ -16,6 +16,7 @@ lint:
 	@make bash:lint
 
 deps:
+	@make packages/reinstall/shfmt
 	@exit 0
 
 build:
