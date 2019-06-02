@@ -18,4 +18,5 @@ sshpass
 syslog-ng
 unzip
 vim
+yq
 zsh
