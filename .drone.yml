@@ -13,11 +13,7 @@ steps:
     commands:
       - apk add --update make curl bash git
       - echo $json_key | docker login https://asia.gcr.io -u _json_key --password-stdin
-      - make init
-      - make lint
-      - make packages/reinstall/shfmt
-      - make bash/fmt/check
-      - make docker/build
+      - make all
       - make push
 
 services:
