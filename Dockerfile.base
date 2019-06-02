@@ -2,6 +2,7 @@ FROM debian:buster-slim
 
 COPY packages.txt /tmp/packages.txt
 
+
 # Install common packages
 RUN (echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections) \
     && APK_PACKAGES=$(cat /tmp/packages.txt | paste -sd ' ' -) \
