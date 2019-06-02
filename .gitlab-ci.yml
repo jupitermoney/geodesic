@@ -2,10 +2,12 @@ image: docker:latest
 
 services:
   - docker:dind
+variables:
+  DOCKER_DRIVER: overlay
 
 before_script:
   - apk add --update make curl bash git
-  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  - echo $json_key | docker login https://asia.gcr.io -u _json_key --password-stdin
 
 build-master:
   stage: build
