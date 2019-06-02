@@ -14,6 +14,7 @@ build-base:
   stage: build
   script:
     - make init
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - make base
   only:
     changes:
