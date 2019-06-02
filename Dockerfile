@@ -10,14 +10,14 @@ ENV CACHE_PATH=/localhost/.geodesic
 
 ENV GEODESIC_PATH=/usr/local/include/toolbox
 ENV HOME=/root
-ENV CLUSTER_NAME=example.niki.ai
+ENV CLUSTER_NAME=dev.niki.ai
 
 #
 # Install the select packages from the cloudposse package manager image
 #
 # Repo: <https://github.com/cloudposse/packages>
 #
-ARG PACKAGES="aws-iam-authenticator awless chamber fetch figurine gomplate goofys helm helmfile kubectl kubens kfctl sops stern terraform terragrunt tfmask yq"
+ARG PACKAGES="aws-iam-authenticator awless chamber fetch figurine gomplate goofys helm helmfile kubectl kubens kfctl sops stern terraform-0.11 terragrunt tfmask yq"
 ENV PACKAGES=${PACKAGES}
 RUN git clone --depth=1 -b master https://github.com/rverma-nikiai/packages.git && \
     rm -rf packages/.git
