@@ -13,6 +13,7 @@ before_script:
 build-base:
   stage: build
   script:
+    - make init
     - make base
   only:
     changes:
