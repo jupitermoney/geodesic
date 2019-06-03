@@ -2,28 +2,23 @@ kind: pipeline
 name: default
 
 steps:
-  - name: build-image
-    image: docker:dind
-    volumes:
-      - name: dockersock
-        path: /var/run
-    environment:
+  - name: validate
+    image: nikiai/geodesic-base:debian
+    commands:
+      - make init deps lint bash/fmt/check
+
+  - name: publish
+    image: banzaicloud/drone-kaniko
+    settings:
+      registry: gcr.io
+      repo: niki-ai/geodesic
+      tags: ${DRONE_COMMIT_SHA}
+      cache: true
       json_key:
         from_secret: gcr_json_key
-    commands:
-      - apk add --update make curl bash git
-      - echo $json_key | docker login https://asia.gcr.io -u _json_key --password-stdin
-      - make all
-      - make push
 
-services:
-  - name: docker
-    image: docker:dind
-    privileged: true
-    volumes:
-      - name: dockersock
-        path: /var/run
-
-volumes:
-  - name: dockersock
-    temp: {}
+trigger:
+  branch:
+    - master
+  event:
+    - push

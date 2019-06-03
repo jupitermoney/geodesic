@@ -20,7 +20,7 @@ deps:
 	@exit 0
 
 build:
-	@docker pull $(DOCKER_IMAGE_NAME)
+	@docker pull $(DOCKER_IMAGE_NAME) || true
 	@make --no-print-directory docker:build
 
 bash/fmt:
