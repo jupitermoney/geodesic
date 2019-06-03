@@ -1,4 +1,4 @@
-export DOCKER_ORG ?= asia.gcr.io/niki-ai
+export DOCKER_ORG ?= gcr.io/niki-ai
 export DOCKER_IMAGE ?= $(DOCKER_ORG)/geodesic
 export DOCKER_TAG ?= latest
 export DOCKER_IMAGE_NAME ?= $(DOCKER_IMAGE):$(DOCKER_TAG)
