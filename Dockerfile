@@ -43,7 +43,6 @@ RUN helm completion bash > /etc/bash_completion.d/helm.sh \
 # Install helm repos
 #
 RUN helm repo add incubator  https://kubernetes-charts-incubator.storage.googleapis.com/ \
-    && helm repo add coreos-stable https://s3-eu-west-1.amazonaws.com/coreos-charts/stable/ \
     && helm repo update
 
 #
