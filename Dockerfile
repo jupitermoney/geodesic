@@ -17,7 +17,7 @@ ENV CLUSTER_NAME=dev.niki.ai
 #
 # Repo: <https://github.com/cloudposse/packages>
 #
-ARG PACKAGES="aws-iam-authenticator awless chamber fetch figurine gomplate goofys helm helmfile kubectl kubens kfctl sops stern terraform terragrunt tfmask yq"
+ARG PACKAGES="aws-iam-authenticator awless chamber fetch figurine gomplate goofys helm helmfile kubectl kubens kfctl sops stern terraform terragrunt yq"
 ENV PACKAGES=${PACKAGES}
 RUN git clone --depth=1 -b master https://github.com/rverma-nikiai/packages.git && \
     rm -rf packages/.git
