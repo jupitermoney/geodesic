@@ -17,7 +17,7 @@ ENV CLUSTER_NAME=dev.niki.ai
 #
 # Repo: <https://github.com/cloudposse/packages>
 #
-ARG PACKAGES="aws-iam-authenticator awless chamber fetch figurine gomplate goofys helm helmfile kubectl kubens kfctl sops stern terraform-0.11 terragrunt tfmask yq"
+ARG PACKAGES="aws-iam-authenticator awless chamber fetch figurine gomplate goofys helm helmfile kubectl kubens kfctl sops stern terraform terragrunt tfmask yq"
 ENV PACKAGES=${PACKAGES}
 RUN git clone --depth=1 -b master https://github.com/rverma-nikiai/packages.git && \
     rm -rf packages/.git
@@ -52,7 +52,7 @@ ENV HELM_DIFF_VERSION 2.11.0+3
 ENV HELM_EDIT_VERSION 0.2.0
 
 RUN helm plugin install https://github.com/databus23/helm-diff --version v${HELM_DIFF_VERSION} \
-    && helm plugin install https://github.com/mstrzele/helm-edit --version v${HELM_EDIT_VERSION}
+    && helm plugin install https://github.com/mstrzele/helm-edit --version v${HELM_EDIT_VERSION} \
     && helm plugin install https://github.com/rimusz/helm-tiller
 
 #
