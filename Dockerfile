@@ -12,7 +12,6 @@ ENV GEODESIC_PATH=/usr/local/include/toolbox
 ENV HOME=/root
 ENV CLUSTER_NAME=audit.niki.ai
 
-#
 # Install the select packages from the cloudposse package manager image
 #
 # Repo: <https://github.com/cloudposse/packages>
