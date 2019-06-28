@@ -19,6 +19,8 @@ steps:
         - ${DRONE_COMMIT_SHA}
         - latest
       cache: true
+      build_args:
+        - "--squash"
       json_key:
         from_secret: gcr_json_key
 
