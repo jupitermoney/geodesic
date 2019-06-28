@@ -8,3 +8,15 @@ terraform.tfstate*
 build-harness
 .build-harness
 rootfs/templates/kube
+.drone.yml
+.editorconfig
+.gitignore
+.gitlab-ci.yml
+*.md
+Dockerfile.base
+LICENSE
+Makefile
+packages.txt
+README.yaml
+requirements.txt
+docs
