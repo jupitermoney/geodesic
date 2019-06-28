@@ -13,15 +13,16 @@ steps:
   - name: publish
     image: plugins/gcr
     settings:
+      auto_tag: true
       registry: gcr.io
+      daemon_experimental: true
       repo: niki-ai/geodesic
-      tags:
-        - ${DRONE_COMMIT_SHA}
-        - latest
+#      tags:
+#        - ${DRONE_COMMIT_SHA}
+#        - latest
       cache: true
       squash: true
-      daemon:
-        experimental: true
+      experimental: true
       json_key:
         from_secret: gcr_json_key
 
