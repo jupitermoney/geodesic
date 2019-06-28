@@ -16,7 +16,5 @@ rootfs/templates/kube
 Dockerfile.base
 LICENSE
 Makefile
-packages.txt
 README.yaml
-requirements.txt
 docs
