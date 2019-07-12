@@ -1,5 +1,5 @@
 export DOCKER_IMAGE="{{getenv "DOCKER_IMAGE" "cloudposse/geodesic"}}"
-export DOCKER_TAG="{{getenv "DOCKER_TAG" "${1:-dev}"}}"
+export DOCKER_TAG="{{getenv "DOCKER_TAG" "${1:-latest}"}}"
 export APP_NAME=${APP_NAME:-$(basename $DOCKER_IMAGE)}
 export INSTALL_PATH=${INSTALL_PATH:-/usr/local/bin}
 export INSTALLER_NAME="${APP_NAME}-installer"
