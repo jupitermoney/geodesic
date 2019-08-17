@@ -17,9 +17,8 @@ steps:
       registry: gcr.io
       daemon_experimental: true
       repo: niki-ai/geodesic
-#      tags:
-#        - ${DRONE_COMMIT_SHA}
-#        - latest
+      tags:
+        - latest
       cache: true
       squash: true
       experimental: true
