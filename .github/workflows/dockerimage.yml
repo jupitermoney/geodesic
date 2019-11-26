@@ -15,5 +15,5 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         registry: docker.pkg.github.com
-        repository: rverma-jm/geodesic/geodesic
+        repository: ${{ github.repository }}
         auto_tag: true
