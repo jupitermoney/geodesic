@@ -10,7 +10,7 @@ ENV CACHE_PATH=/localhost/.geodesic
 
 ENV GEODESIC_PATH=/usr/local/include/toolbox
 ENV HOME=/root
-ENV CLUSTER_NAME=root.niki.ai
+ENV CLUSTER_NAME=root.x.y
 
 # Install the select packages from the cloudposse package manager image
 #
