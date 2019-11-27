@@ -144,6 +144,15 @@ function use() {
         DOCKER_ARGS+=(--volume=${local_home}/.zprezto:/root/.zprezto:cached)
     fi
 
+	if [ -s ${local_home}/.georc ]; then
+		DOCKER_ARGS+=(--volume=${local_home}/.georc:/root/.zshrc)
+    fi
+
+	if [ -s ${local_home}/.p10k.zsh ]; then
+		DOCKER_ARGS+=(--volume=${local_home}/.p10k.zsh:/root/.p10k.zsh)
+    fi
+	
+
 	DOCKER_ARGS+=(--privileged
 		--publish ${GEODESIC_PORT}:${GEODESIC_PORT}
 		--name "${DOCKER_NAME}"
