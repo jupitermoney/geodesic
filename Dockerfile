@@ -19,7 +19,7 @@ ENV CLUSTER_NAME=root.x.y
 ARG PACKAGES="aws-iam-authenticator awless chamber fetch figurine gomplate goofys helm helmfile kubectl kubens kfctl sops stern terraform terragrunt saw yq"
 
 ENV PACKAGES=${PACKAGES}
-RUN git clone --depth=1 -b master https://github.com/rverma-nikiai/packages.git && \
+RUN git clone --depth=1 -b master https://github.com/cloudposse/packages.git && \
     rm -rf packages/.git
 RUN make -C /packages/install ${PACKAGES}
 
