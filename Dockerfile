@@ -36,7 +36,6 @@ ENV HELM_HOME /var/lib/helm
 ENV HELM_VALUES_PATH=${SECRETS_PATH}/helm/values
 RUN helm completion bash > /etc/bash_completion.d/helm.sh \
     && mkdir -p ${HELM_HOME} \
-    && helm init --client-only \
     && mkdir -p ${HELM_HOME}/plugins
 
 #
@@ -52,8 +51,7 @@ ENV HELM_DIFF_VERSION 2.11.0+5
 ENV HELM_EDIT_VERSION 0.3.0
 
 RUN helm plugin install https://github.com/databus23/helm-diff --version v${HELM_DIFF_VERSION} \
-    && helm plugin install https://github.com/mstrzele/helm-edit --version v${HELM_EDIT_VERSION} \
-    && helm plugin install https://github.com/rimusz/helm-tiller
+    && helm plugin install https://github.com/mstrzele/helm-edit --version v${HELM_EDIT_VERSION}
 
 #
 # AWS
