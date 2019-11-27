@@ -47,11 +47,9 @@ RUN helm repo add incubator  https://kubernetes-charts-incubator.storage.googlea
 #
 # Install helm plugins
 #
-ENV HELM_DIFF_VERSION 2.11.0+5
-ENV HELM_EDIT_VERSION 0.3.0
+ENV HELM_DIFF_VERSION 3.0.0-rc.7
 
-RUN helm plugin install https://github.com/databus23/helm-diff --version v${HELM_DIFF_VERSION} \
-    && helm plugin install https://github.com/mstrzele/helm-edit --version v${HELM_EDIT_VERSION}
+RUN helm plugin install https://github.com/databus23/helm-diff --version v${HELM_DIFF_VERSION}
 
 #
 # AWS
